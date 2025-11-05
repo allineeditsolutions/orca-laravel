@@ -7,11 +7,13 @@ import App from './App.vue';
 import Home from './pages/Home.vue';
 import Advertising from './pages/Advertising.vue';
 import NewbizOrganic from './pages/NewbizOrganic.vue';
+import ApplicationForm from './pages/ApplicationForm.vue';
 
 const routes = [
     { path: '/', component: Home },
     { path: '/advertising', component: Advertising },
     { path: '/newbiz-organic', component: NewbizOrganic },
+    { path: '/application-form', component: ApplicationForm },
 ];
 
 const router = createRouter({

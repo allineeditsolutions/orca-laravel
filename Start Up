@@ -3,7 +3,7 @@ ssh -T git@github-orca-laravel
 
 == PUSH NEW CHANGES FROM LOCAL  TO GITHUB
 git add .
-git commit -m "Changes 110525 - 10:43am"
+git commit -m "Changes 110625 - 5:36am"
 git push origin main
 
 

@@ -26,7 +26,7 @@
             </button>
         </div>
         <div v-if="isOpen" class="p-2 lg:p-5 space-y-5 sm:space-y-3">
-            <div class="space-y-3 space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+            <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
                 <h5 class="font-semibold text-gray-800 text-base sm:text-lg ">Owner</h5>
                 <p class="text-red-400 text-sm sm:text-base  ">
                     Please enter Owner Legal Name or Business Legal Name (if applicable)

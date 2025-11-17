@@ -303,6 +303,26 @@
                                     </div>
                                 </div>
 
+                                <div class="bg-gray-50 rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+                                    <label class="flex items-center gap-2 text-base sm:text-lg lg:text-md text-gray-800 mb-3">
+                                        Best describe your property <span class="text-red-500 text-xl">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <select
+                                            v-model="formData.bestDescProperty"
+                                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                        >
+                                            <option value="">-Select Option-</option>
+                                            <option v-for="option in bestDescPropertyOptions" :key="option" :value="option">{{ option }}</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pointer-events-none">
+                                            <svg class="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Estimated Square Footage and Number of Bedrooms - 2 Columns -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-3">
                                     <!-- Estimated Square Footage -->
@@ -537,6 +557,14 @@ const cities = [
     'Other City (Not listed in option)',
 ];
 
+const bestDescPropertyOptions = [
+    'House',
+    'Top of House',
+    'Basement or Garden-Level Suite',
+    'Townhouse',
+    'Condo',
+];
+
 const whenPlanningToRentOptions = [
     'Immediately (within 30 days)',
     'Within the next 1-3 Months',
@@ -596,6 +624,7 @@ const formData = reactive({
     phoneNumber: '',
     rentalPropertyAddress: '',
     cityOfRentalProperty: '',
+    bestDescProperty:'',
     estimatedSquareFootage: '',
     numberOfBedrooms: '',
     whenPlanningToRent: '',

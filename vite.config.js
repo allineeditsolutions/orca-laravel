@@ -24,4 +24,8 @@ export default defineConfig({
             '@': '/resources/js',
         },
     },
+    optimizeDeps: {
+        include: ['primevue/config', '@primevue/themes/aura'],
+        force: true
+    },
 });

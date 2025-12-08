@@ -129,16 +129,20 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="mb-3">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                            <div class="text-gray-900 font-medium">{{ data.pointOfContact?.name || 'N/A' }}</div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Point of Contact</label>
+                            <div class="text-gray-900 font-medium">{{ data.pointOfContact || 'N/A' }}</div>
                         </div>
-                        <div class="mb-3">
+                        <div v-if="data.pointOfContact === 'Other(Specify)'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                            <div class="text-gray-900 font-medium">{{ data.pointOfContactFirstName || 'N/A' }}</div>
+                        </div>
+                        <div v-if="data.pointOfContact === 'Other(Specify)'" class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <div class="text-gray-900 font-medium">{{ data.pointOfContact?.email || 'N/A' }}</div>
+                            <div class="text-gray-900 font-medium">{{ data.pointOfContactEmail || 'N/A' }}</div>
                         </div>
-                        <div class="mb-3">
+                        <div v-if="data.pointOfContact === 'Other(Specify)'" class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                            <div class="text-gray-900 font-medium">{{ data.pointOfContact?.phone || 'N/A' }}</div>
+                            <div class="text-gray-900 font-medium">{{ data.pointOfContactPhone || 'N/A' }}</div>
                         </div>
                     </div>
                 </div>
@@ -226,12 +230,16 @@
                             <div class="text-gray-900 font-medium">{{ data.rental?.neighborhood || 'N/A' }}</div>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Rent</label>
-                            <div class="text-gray-900 font-medium">{{ formatCurrency(data.rental?.rent) || 'N/A' }}</div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Year Built</label>
+                            <div class="text-gray-900 font-medium">{{ data.rental?.yearBuilt || 'N/A' }}</div>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Security Deposit</label>
-                            <div class="text-gray-900 font-medium">{{ formatCurrency(data.rental?.securityDeposit) || 'N/A' }}</div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Total Floor Area</label>
+                            <div class="text-gray-900 font-medium">{{ data.rental?.totalFloorArea ? `${data.rental.totalFloorArea} sq. ft.` : 'N/A' }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Keys</label>
+                            <div class="text-gray-900 font-medium">{{ data.rental?.keys || 'N/A' }}</div>
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Bedrooms</label>
@@ -242,18 +250,34 @@
                             <div class="text-gray-900 font-medium">{{ data.rental?.bathrooms || 'N/A' }}</div>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Square Footage</label>
-                            <div class="text-gray-900 font-medium">{{ data.rental?.squareFootage || 'N/A' }}</div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Den</label>
+                            <div class="text-gray-900 font-medium">{{ data.rental?.den || 'N/A' }}</div>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Year Built</label>
-                            <div class="text-gray-900 font-medium">{{ data.rental?.yearBuilt || 'N/A' }}</div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Balcony/Patio</label>
+                            <div class="text-gray-900 font-medium">{{ data.rental?.balconypatio || 'N/A' }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Storage</label>
+                            <div class="text-gray-900 font-medium">{{ data.rental?.storage || 'N/A' }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Alarm Code</label>
+                            <div class="text-gray-900 font-medium">{{ data.rental?.alarmCode || 'N/A' }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Parking Level/Stall</label>
+                            <div class="text-gray-900 font-medium">{{ data.rental?.parkingLevelStall || 'N/A' }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Laundry</label>
+                            <div class="text-gray-900 font-medium">{{ data.rental?.laundry || 'N/A' }}</div>
                         </div>
                     </div>
-                    <div v-if="data.rental?.parking && data.rental.parking.length > 0" class="mt-4">
+                    <div v-if="data.rental?.parking && Object.keys(data.rental.parking).length > 0" class="mt-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Parking</label>
                         <div class="flex flex-wrap gap-2">
-                            <span v-for="item in data.rental.parking" :key="item" class="px-3 py-1 bg-gray-100 text-gray-800 rounded-lg text-sm">{{ item }}</span>
+                            <span v-for="(count, type) in data.rental.parking" :key="type" class="px-3 py-1 bg-gray-100 text-gray-800 rounded-lg text-sm">{{ type }}: {{ count }}</span>
                         </div>
                     </div>
                     <div v-if="data.rental?.fireplaceTypes && data.rental.fireplaceTypes.length > 0" class="mt-4">
@@ -261,6 +285,16 @@
                         <div class="flex flex-wrap gap-2">
                             <span v-for="item in data.rental.fireplaceTypes" :key="item" class="px-3 py-1 bg-gray-100 text-gray-800 rounded-lg text-sm">{{ item }}</span>
                         </div>
+                    </div>
+                    <div v-if="data.rental?.heating && data.rental.heating.length > 0" class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Heating</label>
+                        <div class="flex flex-wrap gap-2">
+                            <span v-for="item in data.rental.heating" :key="item" class="px-3 py-1 bg-gray-100 text-gray-800 rounded-lg text-sm">{{ item }}</span>
+                        </div>
+                    </div>
+                    <div v-if="data.rental?.heatingType" class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Heating Type</label>
+                        <div class="text-gray-900 font-medium">{{ data.rental.heatingType }}</div>
                     </div>
                     </div>
                 </div>
@@ -295,16 +329,48 @@
                     <div v-if="isOccupancyOpen" class="p-5">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="mb-3">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Is Property Occupied?</label>
-                            <div class="text-gray-900 font-medium">{{ data.occupancy?.isOccupied || 'N/A' }}</div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Property Currently</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.availableAsap || 'N/A' }}</div>
+                        </div>
+                        <div v-if="data.occupancy?.availableAsap === 'Tenant Occupied'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tenant Vacating Date</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.tenantVacatingDate || 'N/A' }}</div>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Available Date</label>
-                            <div class="text-gray-900 font-medium">{{ data.occupancy?.availableDate || 'N/A' }}</div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Renovation Plans</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.renovationPlans || 'N/A' }}</div>
+                        </div>
+                        <div v-if="data.occupancy?.renovationPlans === 'Yes'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Expected Renovations</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.expectedRenovations || 'N/A' }}</div>
                         </div>
                         <div class="mb-3">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Move In Date</label>
-                            <div class="text-gray-900 font-medium">{{ data.occupancy?.moveInDate || 'N/A' }}</div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Fixed Term Only</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.fixedTermOnly || 'N/A' }}</div>
+                        </div>
+                        <div v-if="data.occupancy?.fixedTermOnly === 'Yes'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Fixed Term Tenancy Description</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.fixedTermTenancyDescription || 'N/A' }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Boost Ad</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.boostAd || 'N/A' }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Anticipated Date</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.anticipatedDate || 'N/A' }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Rental Term</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.rentalTerm || 'N/A' }}</div>
+                        </div>
+                        <div v-if="data.occupancy?.rentalTerm === 'Short-term, less than 1 year'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Short-term Availability Info</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.shortTermAvailabilityInfo || 'N/A' }}</div>
+                        </div>
+                        <div v-if="data.occupancy?.rentalTerm === 'Long-term, 1 year +'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Availability Info</label>
+                            <div class="text-gray-900 font-medium">{{ data.occupancy?.availabilityInfo || 'N/A' }}</div>
                         </div>
                     </div>
                     <div v-if="tenants.length > 0 && tenants[0].name" class="mt-4">
@@ -362,17 +428,33 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">Water</label>
                             <div class="text-gray-900 font-medium">{{ data.utilities?.water || 'N/A' }}</div>
                         </div>
+                        <div v-if="data.utilities?.water === 'Other'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Water Other Detail</label>
+                            <div class="text-gray-900 font-medium">{{ data.utilities?.waterOtherDetail || 'N/A' }}</div>
+                        </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Electricity</label>
                             <div class="text-gray-900 font-medium">{{ data.utilities?.electricity || 'N/A' }}</div>
+                        </div>
+                        <div v-if="data.utilities?.electricity === 'Other'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Electricity Other Detail</label>
+                            <div class="text-gray-900 font-medium">{{ data.utilities?.electricityOtherDetail || 'N/A' }}</div>
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Gas</label>
                             <div class="text-gray-900 font-medium">{{ data.utilities?.gas || 'N/A' }}</div>
                         </div>
+                        <div v-if="data.utilities?.gas === 'Other'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gas Other Detail</label>
+                            <div class="text-gray-900 font-medium">{{ data.utilities?.gasOtherDetail || 'N/A' }}</div>
+                        </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Heat</label>
                             <div class="text-gray-900 font-medium">{{ data.utilities?.heat || 'N/A' }}</div>
+                        </div>
+                        <div v-if="data.utilities?.heat === 'Other'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Heat Other Detail</label>
+                            <div class="text-gray-900 font-medium">{{ data.utilities?.heatOtherDetail || 'N/A' }}</div>
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Furnishing</label>
@@ -382,9 +464,17 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">Pets Allowed</label>
                             <div class="text-gray-900 font-medium">{{ data.utilities?.pets || 'N/A' }}</div>
                         </div>
+                        <div v-if="data.utilities?.pets === 'Yes'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Pet Restrictions</label>
+                            <div class="text-gray-900 font-medium">{{ data.utilities?.petRestrictions || 'N/A' }}</div>
+                        </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Property Type</label>
                             <div class="text-gray-900 font-medium">{{ data.utilities?.propertyType || 'N/A' }}</div>
+                        </div>
+                        <div v-if="data.utilities?.propertyType === 'Condo'" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Condo Restrictions</label>
+                            <div class="text-gray-900 font-medium">{{ data.utilities?.condoRestrictions || 'N/A' }}</div>
                         </div>
                     </div>
                     <div v-if="data.utilities?.inclusions && data.utilities.inclusions.length > 0" class="mt-4">
@@ -569,7 +659,8 @@
             <button
                 v-if="onSubmit"
                 @click="handleSubmit"
-                class="r-p-3 cursor-pointer bg-black hover:bg-gray-800 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-semibold flex items-center gap-2 transition-colors duration-200 shadow-lg hover:shadow-xl"
+                :disabled="isSubmitted"
+                class="r-p-3 cursor-pointer bg-black hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-semibold flex items-center gap-2 transition-colors duration-200 shadow-lg hover:shadow-xl"
             >
                 Submit
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -612,7 +703,7 @@ const hasOwnerInfo = computed(() => {
 });
 
 const hasPointOfContact = computed(() => {
-    return props.data?.pointOfContact?.name || props.data?.pointOfContact?.email || props.data?.pointOfContact?.phone;
+    return props.data?.pointOfContact || (props.data?.pointOfContact === 'Other(Specify)' && (props.data?.pointOfContactFirstName || props.data?.pointOfContactEmail || props.data?.pointOfContactPhone));
 });
 
 const hasMailingInfo = computed(() => {
@@ -624,7 +715,7 @@ const hasRentalInfo = computed(() => {
 });
 
 const hasOccupancyInfo = computed(() => {
-    return props.data?.occupancy?.isOccupied || props.data?.occupancy?.availableDate || props.data?.occupancy?.tenants?.length > 0;
+    return props.data?.occupancy?.availableAsap || props.data?.occupancy?.renovationPlans || props.data?.occupancy?.fixedTermOnly || props.data?.occupancy?.boostAd || props.data?.occupancy?.anticipatedDate || props.data?.occupancy?.rentalTerm || props.data?.occupancy?.tenants?.length > 0;
 });
 
 const hasUtilitiesInfo = computed(() => {
@@ -679,6 +770,14 @@ const formatCurrency = (value) => {
 };
 
 const handleSubmit = () => {
+    // Prevent double submission
+    if (isSubmitted.value) {
+        return;
+    }
+
+    isSubmitted.value = true;
+
+    
     // Add confetti effect
     const duration = 3000;
     const end = Date.now() + duration;
@@ -712,13 +811,8 @@ const handleSubmit = () => {
     // Show success message
     isSubmitted.value = true;
     
-    // Emit submit event to parent
+    // Emit submit event to parent (this will trigger the API call)
     emit('submit');
-    
-    // Also call the onSubmit prop if provided
-    if (props.onSubmit) {
-        props.onSubmit();
-    }
 };
 
 const handleStartVerification = async () => {
@@ -803,7 +897,6 @@ const initializeComplyCube = (token) => {
         const complycube = new window.ComplyCube({
             token: token,
             onComplete: (result) => {
-                console.log('Verification completed:', result);
                 isVerifying.value = false;
                 // Handle successful verification
                 if (result.status === 'complete') {

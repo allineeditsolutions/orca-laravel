@@ -48,16 +48,18 @@
                             <input
                                 :value="d.streetAddress || ''"
                                 @input="handleDataChange('rental.streetAddress', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['rental.streetAddress'] ? 'border-red-500' : 'border-gray-200 focus:ring-black/10']"
                             />
+                            <p v-if="validationErrors['rental.streetAddress']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['rental.streetAddress']) ? validationErrors['rental.streetAddress'][0] : validationErrors['rental.streetAddress'] }}</p>
                         </div>
                         <div>
                             <label class="block mb-2 text-gray-800">City <span class="text-red-500">*</span></label>
                             <input
                                 :value="d.city || ''"
                                 @input="handleDataChange('rental.city', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['rental.city'] ? 'border-red-500' : 'border-gray-200 focus:ring-black/10']"
                             />
+                            <p v-if="validationErrors['rental.city']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['rental.city']) ? validationErrors['rental.city'][0] : validationErrors['rental.city'] }}</p>
                         </div>
                         <div>
                             <label class="block mb-2 text-gray-800">Province <span class="text-red-500">*</span></label>
@@ -65,7 +67,7 @@
                                 <select
                                     :value="d.province || ''"
                                     @change="handleDataChange('rental.province', $event.target.value)"
-                                    class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                    :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['rental.province'] ? 'border-red-500' : 'border-gray-200 focus:ring-black/10']"
                                 >
                                     <option value="">Select Province</option>
                                     <option v-for="p in provinces" :key="p" :value="p">{{ p }}</option>
@@ -76,6 +78,7 @@
                                     </svg>
                                 </div>
                             </div>
+                            <p v-if="validationErrors['rental.province']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['rental.province']) ? validationErrors['rental.province'][0] : validationErrors['rental.province'] }}</p>
                         </div>
                     </div>
 
@@ -85,8 +88,9 @@
                             <input
                                 :value="d.postalCode || ''"
                                 @input="handleDataChange('rental.postalCode', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['rental.postalCode'] ? 'border-red-500' : 'border-gray-200 focus:ring-black/10']"
                             />
+                            <p v-if="validationErrors['rental.postalCode']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['rental.postalCode']) ? validationErrors['rental.postalCode'][0] : validationErrors['rental.postalCode'] }}</p>
                         </div>
                         <div>
                             <label class="block mb-2 text-gray-800">Neighborhood</label>
@@ -110,8 +114,9 @@
                             <input
                                 :value="d.totalFloorArea || ''"
                                 @input="handleDataChange('rental.totalFloorArea', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['rental.totalFloorArea'] ? 'border-red-500' : 'border-gray-200 focus:ring-black/10']"
                             />
+                            <p v-if="validationErrors['rental.totalFloorArea']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['rental.totalFloorArea']) ? validationErrors['rental.totalFloorArea'][0] : validationErrors['rental.totalFloorArea'] }}</p>
                         </div>
                     </div>
                 </div>
@@ -168,9 +173,11 @@
                             :value="d.keysOther || ''"
                             @input="handleDataChange('rental.keysOther', $event.target.value)"
                             placeholder="(e.g. currently overseas, contact my brother to deliver keys, keys)"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['rental.keysOther'] ? 'border-red-500' : 'border-gray-200 focus:ring-black/10']"
                         />
+                        <p v-if="validationErrors['rental.keysOther']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['rental.keysOther']) ? validationErrors['rental.keysOther'][0] : validationErrors['rental.keysOther'] }}</p>
                     </div>
+                    <p v-if="validationErrors['rental.keys'] && (d.keys || '') !== 'Other'" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['rental.keys']) ? validationErrors['rental.keys'][0] : validationErrors['rental.keys'] }}</p>
                 </div>
 
                 <!-- Property Details -->
@@ -183,7 +190,7 @@
                                 <select
                                     :value="(d[featureKeyMap[label]] || '')"
                                     @change="handleDataChange(`rental.${featureKeyMap[label]}`, $event.target.value)"
-                                    class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                    :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`rental.${featureKeyMap[label]}`] ? 'border-red-500' : 'border-gray-200 focus:ring-black/10']"
                                 >
                                     <option value="">Select</option>
                                     <option v-for="n in (['Den','Balcony/Patio','Storage'].includes(label) ? ['Yes','No'] : ['0','1','2','3','4','5','6'])" :key="n" :value="n">{{ n }}</option>
@@ -194,6 +201,7 @@
                                     </svg>
                                 </div>
                             </div>
+                            <p v-if="validationErrors[`rental.${featureKeyMap[label]}`]" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors[`rental.${featureKeyMap[label]}`]) ? validationErrors[`rental.${featureKeyMap[label]}`][0] : validationErrors[`rental.${featureKeyMap[label]}`] }}</p>
                         </div>
                     </div>
                 </div>
@@ -275,7 +283,7 @@
                         <select
                             :value="d.laundry || ''"
                             @change="handleDataChange('rental.laundry', $event.target.value)"
-                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                            :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['rental.laundry'] ? 'border-red-500' : 'border-gray-200 focus:ring-black/10']"
                         >
                             <option value="">Select</option>
                             <option v-for="o in ['In-Suite','Shared','None']" :key="o" :value="o">{{ o }}</option>
@@ -286,6 +294,7 @@
                             </svg>
                         </div>
                     </div>
+                    <p v-if="validationErrors['rental.laundry']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['rental.laundry']) ? validationErrors['rental.laundry'][0] : validationErrors['rental.laundry'] }}</p>
                 </div>
 
                 <!-- Heating -->
@@ -315,9 +324,11 @@
                             @input="handleDataChange('rental.heatingType', $event.target.value)"
                             placeholder="Enter heating type"
                             rows="4"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y', validationErrors['rental.heatingType'] ? 'border-red-500' : 'border-gray-200 focus:ring-black/10']"
                         ></textarea>
+                        <p v-if="validationErrors['rental.heatingType']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['rental.heatingType']) ? validationErrors['rental.heatingType'][0] : validationErrors['rental.heatingType'] }}</p>
                     </div>
+                    <p v-if="validationErrors['rental.heating']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['rental.heating']) ? validationErrors['rental.heating'][0] : validationErrors['rental.heating'] }}</p>
                 </div>
             </div>
         </div>
@@ -356,6 +367,10 @@ const props = defineProps({
     onBack: Function,
     onNext: Function,
     formData: {
+        type: Object,
+        default: () => ({}),
+    },
+    validationErrors: {
         type: Object,
         default: () => ({}),
     },

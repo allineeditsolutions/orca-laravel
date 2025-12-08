@@ -38,7 +38,7 @@
                                 <select
                                     :value="d.utilities?.water || ''"
                                     @change="handleDataChange('utilities.water', $event.target.value)"
-                                    class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                    :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['utilities.water'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                 >
                                     <option value="">-- Select --</option>
                                     <option value="Included in Rent">Included in Rent</option>
@@ -53,6 +53,7 @@
                                     </svg>
                                 </div>
                             </div>
+                            <p v-if="validationErrors['utilities.water']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['utilities.water']) ? validationErrors['utilities.water'][0] : validationErrors['utilities.water'] }}</p>
                             <div v-if="d.utilities?.water === 'Split'" class="mt-3 space-y-2">
                                 <div class="flex items-center gap-2 text-red-500 text-xs">
                                     <span>i.e 30 - (Tenant is responsible for 30% of the utility)</span>
@@ -81,7 +82,7 @@
                                 <select
                                     :value="d.utilities?.electricity || ''"
                                     @change="handleDataChange('utilities.electricity', $event.target.value)"
-                                    class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                    :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['utilities.electricity'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                 >
                                     <option value="">-- Select --</option>
                                     <option value="Included in Rent">Included in Rent</option>
@@ -96,6 +97,7 @@
                                     </svg>
                                 </div>
                             </div>
+                            <p v-if="validationErrors['utilities.electricity']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['utilities.electricity']) ? validationErrors['utilities.electricity'][0] : validationErrors['utilities.electricity'] }}</p>
                             <div v-if="d.utilities?.electricity === 'Split'" class="mt-3 space-y-2">
                                 <div class="flex items-center gap-2 text-red-500 text-xs">
                                     <span>i.e 30 - (Tenant is responsible for 30% of the utility)</span>
@@ -124,7 +126,7 @@
                                 <select
                                     :value="d.utilities?.gas || ''"
                                     @change="handleDataChange('utilities.gas', $event.target.value)"
-                                    class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                    :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['utilities.gas'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                 >
                                     <option value="">-- Select --</option>
                                     <option value="Included in Rent">Included in Rent</option>
@@ -139,6 +141,7 @@
                                     </svg>
                                 </div>
                             </div>
+                            <p v-if="validationErrors['utilities.gas']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['utilities.gas']) ? validationErrors['utilities.gas'][0] : validationErrors['utilities.gas'] }}</p>
                             <div v-if="d.utilities?.gas === 'Split'" class="mt-3 space-y-2">
                                 <div class="flex items-center gap-2 text-red-500 text-xs">
                                     <span>i.e 30 - (Tenant is responsible for 30% of the utility)</span>
@@ -167,7 +170,7 @@
                                 <select
                                     :value="d.utilities?.heat || ''"
                                     @change="handleDataChange('utilities.heat', $event.target.value)"
-                                    class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                    :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['utilities.heat'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                 >
                                     <option value="">-- Select --</option>
                                     <option value="Included in Rent">Included in Rent</option>
@@ -182,6 +185,7 @@
                                     </svg>
                                 </div>
                             </div>
+                            <p v-if="validationErrors['utilities.heat']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['utilities.heat']) ? validationErrors['utilities.heat'][0] : validationErrors['utilities.heat'] }}</p>
                             <div v-if="d.utilities?.heat === 'Split'" class="mt-3 space-y-2">
                                 <div class="flex items-center gap-2 text-red-500 text-xs">
                                     <span>i.e 30 - (Tenant is responsible for 30% of the utility)</span>
@@ -233,8 +237,9 @@
                             @input="handleDataChange('utilities.inclusionsOtherDetail', $event.target.value)"
                             placeholder="Enter details about other items"
                             rows="4"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base  text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y', validationErrors['utilities.inclusionsOtherDetail'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                         ></textarea>
+                        <p v-if="validationErrors['utilities.inclusionsOtherDetail']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['utilities.inclusionsOtherDetail']) ? validationErrors['utilities.inclusionsOtherDetail'][0] : validationErrors['utilities.inclusionsOtherDetail'] }}</p>
                     </div>
                 </div>
 
@@ -259,6 +264,7 @@
                             <span>{{ label }}</span>
                         </label>
                     </div>
+                    <p v-if="validationErrors['utilities.furnishing']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['utilities.furnishing']) ? validationErrors['utilities.furnishing'][0] : validationErrors['utilities.furnishing'] }}</p>
                 </div>
 
                 <!-- Pets -->
@@ -312,6 +318,7 @@
                             <span>{{ label }}</span>
                         </label>
                     </div>
+                    <p v-if="validationErrors['utilities.propertyType']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['utilities.propertyType']) ? validationErrors['utilities.propertyType'][0] : validationErrors['utilities.propertyType'] }}</p>
                     <div v-if="d.utilities?.propertyType === 'Other'" class="mt-3 space-y-2">
                         <label class="block mb-2 text-gray-800">Property Type <span class="text-red-500">*</span></label>
                         <p class="text-red-500 text-sm">Please provide the Property Type</p>
@@ -319,8 +326,9 @@
                             :value="d.utilities?.propertyTypeOtherDetail || ''"
                             @input="handleDataChange('utilities.propertyTypeOtherDetail', $event.target.value)"
                             rows="4"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y', validationErrors['utilities.propertyTypeOtherDetail'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                         ></textarea>
+                        <p v-if="validationErrors['utilities.propertyTypeOtherDetail']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['utilities.propertyTypeOtherDetail']) ? validationErrors['utilities.propertyTypeOtherDetail'][0] : validationErrors['utilities.propertyTypeOtherDetail'] }}</p>
                     </div>
                 </div>
             </div>
@@ -360,6 +368,10 @@ const props = defineProps({
     onBack: Function,
     onNext: Function,
     formData: {
+        type: Object,
+        default: () => ({}),
+    },
+    validationErrors: {
         type: Object,
         default: () => ({}),
     },

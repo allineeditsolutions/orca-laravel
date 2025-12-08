@@ -61,8 +61,9 @@
                                 :value="formData.pointOfContactFirstName"
                                 @input="handleChange('pointOfContactFirstName', $event.target.value)"
                                 placeholder="First Name"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.pointOfContactFirstName ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors.pointOfContactFirstName" class="mt-1 text-sm text-red-600">{{ validationErrors.pointOfContactFirstName }}</p>
                         </div>
                         <!-- Email Address -->
                         <div>
@@ -74,8 +75,9 @@
                                 :value="formData.pointOfContactEmail"
                                 @input="handleChange('pointOfContactEmail', $event.target.value)"
                                 placeholder="Email Address"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.pointOfContactEmail ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors.pointOfContactEmail" class="mt-1 text-sm text-red-600">{{ validationErrors.pointOfContactEmail }}</p>
                         </div>
                         <!-- Phone -->
                         <div>
@@ -85,10 +87,11 @@
                             <input
                                 type="tel"
                                 :value="formData.pointOfContactPhone"
-                                @input="handleChange('pointOfContactPhone', $event.target.value)"
+                                @input="handlePhoneChange($event.target.value)"
                                 placeholder="(000) 000-0000"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.pointOfContactPhone ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors.pointOfContactPhone" class="mt-1 text-sm text-red-600">{{ validationErrors.pointOfContactPhone }}</p>
                         </div>
                     </div>
                 </div>
@@ -105,14 +108,42 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    validationErrors: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const emit = defineEmits(['data-change']);
 
 const isOpen = ref(true);
 
+const formatPhoneNumber = (value) => {
+    // Remove all non-digit characters
+    const phoneNumber = value.replace(/\D/g, '');
+    
+    // Limit to 10 digits
+    const limitedNumber = phoneNumber.slice(0, 10);
+    
+    // Format as (000) 000-0000
+    if (limitedNumber.length === 0) {
+        return '';
+    } else if (limitedNumber.length <= 3) {
+        return `(${limitedNumber}`;
+    } else if (limitedNumber.length <= 6) {
+        return `(${limitedNumber.slice(0, 3)}) ${limitedNumber.slice(3)}`;
+    } else {
+        return `(${limitedNumber.slice(0, 3)}) ${limitedNumber.slice(3, 6)}-${limitedNumber.slice(6)}`;
+    }
+};
+
 const handleChange = (field, value) => {
     emit('data-change', field, value);
+};
+
+const handlePhoneChange = (value) => {
+    const formatted = formatPhoneNumber(value);
+    emit('data-change', 'pointOfContactPhone', formatted);
 };
 </script>
 

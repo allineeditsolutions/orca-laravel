@@ -42,8 +42,9 @@
                             type="text"
                             :value="d.other?.strataCompany || ''"
                             @input="handleDataChange('other.strataCompany', $event.target.value)"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataCompany'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                         />
+                        <p v-if="validationErrors['other.strataCompany']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataCompany']) ? validationErrors['other.strataCompany'][0] : validationErrors['other.strataCompany'] }}</p>
                     </div>
                 </div>
 
@@ -57,8 +58,9 @@
                                 type="text"
                                 :value="d.other?.strataManagerName || ''"
                                 @input="handleDataChange('other.strataManagerName', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataManagerName'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors['other.strataManagerName']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataManagerName']) ? validationErrors['other.strataManagerName'][0] : validationErrors['other.strataManagerName'] }}</p>
                         </div>
                         <div>
                             <label class="block mb-2 text-gray-800">Strata Phone</label>
@@ -67,8 +69,9 @@
                                 :value="d.other?.strataPhone || ''"
                                 @input="handleDataChange('other.strataPhone', $event.target.value)"
                                 placeholder="(000) 000-0000"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataPhone'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors['other.strataPhone']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataPhone']) ? validationErrors['other.strataPhone'][0] : validationErrors['other.strataPhone'] }}</p>
                         </div>
                         <div>
                             <label class="block mb-2 text-gray-800">Strata Email Address</label>
@@ -76,8 +79,9 @@
                                 type="email"
                                 :value="d.other?.strataEmail || ''"
                                 @input="handleDataChange('other.strataEmail', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataEmail'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors['other.strataEmail']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataEmail']) ? validationErrors['other.strataEmail'][0] : validationErrors['other.strataEmail'] }}</p>
                         </div>
                         <div>
                             <label class="block mb-2 text-gray-800">Building Manager Name</label>
@@ -85,8 +89,9 @@
                                 type="text"
                                 :value="d.other?.buildingManagerName || ''"
                                 @input="handleDataChange('other.buildingManagerName', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.buildingManagerName'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors['other.buildingManagerName']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.buildingManagerName']) ? validationErrors['other.buildingManagerName'][0] : validationErrors['other.buildingManagerName'] }}</p>
                         </div>
                         <div>
                             <label class="block mb-2 text-gray-800">Phone</label>
@@ -95,8 +100,9 @@
                                 :value="d.other?.buildingManagerPhone || ''"
                                 @input="handleDataChange('other.buildingManagerPhone', $event.target.value)"
                                 placeholder="(000) 000-0000"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.buildingManagerPhone'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors['other.buildingManagerPhone']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.buildingManagerPhone']) ? validationErrors['other.buildingManagerPhone'][0] : validationErrors['other.buildingManagerPhone'] }}</p>
                         </div>
                         <div>
                             <label class="block mb-2 text-gray-800">Email Address</label>
@@ -104,8 +110,9 @@
                                 type="email"
                                 :value="d.other?.buildingManagerEmail || ''"
                                 @input="handleDataChange('other.buildingManagerEmail', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.buildingManagerEmail'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors['other.buildingManagerEmail']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.buildingManagerEmail']) ? validationErrors['other.buildingManagerEmail'][0] : validationErrors['other.buildingManagerEmail'] }}</p>
                         </div>
                     </div>
                 </div>
@@ -121,8 +128,9 @@
                             :value="formatMoveInFees(d.other?.moveInFees)"
                             @input="handleMoveInFeesChange($event.target.value)"
                             placeholder="0.00"
-                            class="w-full pl-8 pr-4 p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                            :class="['w-full pl-8 pr-4 p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.moveInFees'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                         />
+                        <p v-if="validationErrors['other.moveInFees']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.moveInFees']) ? validationErrors['other.moveInFees'][0] : validationErrors['other.moveInFees'] }}</p>
                     </div>
                 </div>
 
@@ -151,8 +159,9 @@
                             :value="d.other?.amenitiesOtherDetail || ''"
                             @input="handleDataChange('other.amenitiesOtherDetail', $event.target.value)"
                             rows="4"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white hover:shadow-lg shadow-md focus:shadow-xl resize-y', validationErrors['other.amenitiesOtherDetail'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                         ></textarea>
+                        <p v-if="validationErrors['other.amenitiesOtherDetail']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.amenitiesOtherDetail']) ? validationErrors['other.amenitiesOtherDetail'][0] : validationErrors['other.amenitiesOtherDetail'] }}</p>
                     </div>
                 </div>
 
@@ -199,7 +208,7 @@
                                 <select
                                     :value="d.other?.maintenanceFrequencies?.[label] || ''"
                                     @change="handleMaintenanceFrequencyChange(label, $event.target.value)"
-                                    class="w-full p-2 pr-8 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                    :class="['w-full p-2 pr-8 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`other.maintenanceFrequencies.${label}`] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                 >
                                     <option value="">-- Select --</option>
                                     <option v-if="label === 'Heating system' || label === 'Chimney'" value="Annual maintenance is preferred">Annual maintenance is preferred</option>
@@ -217,6 +226,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
+                                <p v-if="validationErrors[`other.maintenanceFrequencies.${label}`]" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors[`other.maintenanceFrequencies.${label}`]) ? validationErrors[`other.maintenanceFrequencies.${label}`][0] : validationErrors[`other.maintenanceFrequencies.${label}`] }}</p>
                             </div>
                         </div>
                     </div>
@@ -230,7 +240,7 @@
                             <select
                                 :value="d.other?.sprinklersService || ''"
                                 @change="handleDataChange('other.sprinklersService', $event.target.value)"
-                                class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.sprinklersService'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             >
                                 <option value="">-- Select --</option>
                                 <option value="Yes">Yes</option>
@@ -241,6 +251,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </div>
+                            <p v-if="validationErrors['other.sprinklersService']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.sprinklersService']) ? validationErrors['other.sprinklersService'][0] : validationErrors['other.sprinklersService'] }}</p>
                         </div>
                     </div>
                     <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
@@ -249,7 +260,7 @@
                             <select
                                 :value="d.other?.hasSelfContainedSuite || ''"
                                 @change="handleDataChange('other.hasSelfContainedSuite', $event.target.value)"
-                                class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.hasSelfContainedSuite'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             >
                                 <option value="">-- Select --</option>
                                 <option value="Yes">Yes</option>
@@ -260,6 +271,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </div>
+                            <p v-if="validationErrors['other.hasSelfContainedSuite']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.hasSelfContainedSuite']) ? validationErrors['other.hasSelfContainedSuite'][0] : validationErrors['other.hasSelfContainedSuite'] }}</p>
                         </div>
                         <div v-if="d.other?.hasSelfContainedSuite === 'Yes'" class="mt-4 space-y-4">
                             <div>
@@ -269,8 +281,9 @@
                                     :value="d.other?.suiteBedrooms || ''"
                                     @input="handleDataChange('other.suiteBedrooms', $event.target.value)"
                                     placeholder="Bedrooms"
-                                    class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.suiteBedrooms'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                 />
+                                <p v-if="validationErrors['other.suiteBedrooms']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.suiteBedrooms']) ? validationErrors['other.suiteBedrooms'][0] : validationErrors['other.suiteBedrooms'] }}</p>
                             </div>
                             <div>
                                 <label class="block mb-2 text-gray-800">Is self-contained suite tenanted?</label>
@@ -278,7 +291,7 @@
                                     <select
                                         :value="d.other?.suiteTenanted || ''"
                                         @change="handleDataChange('other.suiteTenanted', $event.target.value)"
-                                        class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                        :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.suiteTenanted'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                     >
                                         <option value="">-- Select --</option>
                                         <option value="Yes">Yes</option>
@@ -289,6 +302,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
                                         </svg>
                                     </div>
+                                    <p v-if="validationErrors['other.suiteTenanted']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.suiteTenanted']) ? validationErrors['other.suiteTenanted'][0] : validationErrors['other.suiteTenanted'] }}</p>
                                 </div>
                             </div>
 
@@ -345,8 +359,9 @@
                                                         :value="tenant.name || ''"
                                                         @input="handleSuiteTenantChange(index, 'name', $event.target.value)"
                                                         placeholder="Tenant Name"
-                                                        class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                                        :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`other.suiteTenants.${index}.name`] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                                     />
+                                                    <p v-if="validationErrors[`other.suiteTenants.${index}.name`]" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors[`other.suiteTenants.${index}.name`]) ? validationErrors[`other.suiteTenants.${index}.name`][0] : validationErrors[`other.suiteTenants.${index}.name`] }}</p>
                                                 </div>
                                                 <div>
                                                     <label class="block mb-2 text-gray-800">Tenant Phone <span class="text-red-500">*</span></label>
@@ -355,8 +370,9 @@
                                                         :value="tenant.phone || ''"
                                                         @input="handleSuiteTenantChange(index, 'phone', $event.target.value)"
                                                         placeholder="(000) 000-0000"
-                                                        class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                                        :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`other.suiteTenants.${index}.phone`] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                                     />
+                                                    <p v-if="validationErrors[`other.suiteTenants.${index}.phone`]" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors[`other.suiteTenants.${index}.phone`]) ? validationErrors[`other.suiteTenants.${index}.phone`][0] : validationErrors[`other.suiteTenants.${index}.phone`] }}</p>
                                                 </div>
                                                 <div>
                                                     <label class="block mb-2 text-gray-800">Tenant Email Address <span class="text-red-500">*</span></label>
@@ -365,8 +381,9 @@
                                                         :value="tenant.email || ''"
                                                         @input="handleSuiteTenantChange(index, 'email', $event.target.value)"
                                                         placeholder="Tenant Email Address"
-                                                        class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                                        :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`other.suiteTenants.${index}.email`] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                                     />
+                                                    <p v-if="validationErrors[`other.suiteTenants.${index}.email`]" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors[`other.suiteTenants.${index}.email`]) ? validationErrors[`other.suiteTenants.${index}.email`][0] : validationErrors[`other.suiteTenants.${index}.email`] }}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -390,8 +407,9 @@
                                     :value="d.other?.suiteOtherDetails || ''"
                                     @input="handleDataChange('other.suiteOtherDetails', $event.target.value)"
                                     rows="4"
-                                    class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl resize-y', validationErrors['other.suiteOtherDetails'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                 ></textarea>
+                                <p v-if="validationErrors['other.suiteOtherDetails']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.suiteOtherDetails']) ? validationErrors['other.suiteOtherDetails'][0] : validationErrors['other.suiteOtherDetails'] }}</p>
                             </div>
                         </div>
                     </div>
@@ -408,8 +426,9 @@
                                 type="text"
                                 :value="d.other?.fuseBox || ''"
                                 @input="handleDataChange('other.fuseBox', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.fuseBox'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors['other.fuseBox']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.fuseBox']) ? validationErrors['other.fuseBox'][0] : validationErrors['other.fuseBox'] }}</p>
                         </div>
 
                          <!-- Garbage: Location, Disposal & Restrictions -->
@@ -420,8 +439,9 @@
                                 type="text"
                                 :value="d.other?.garbageInfo || ''"
                                 @input="handleDataChange('other.garbageInfo', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.garbageInfo'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors['other.garbageInfo']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.garbageInfo']) ? validationErrors['other.garbageInfo'][0] : validationErrors['other.garbageInfo'] }}</p>
                         </div>
 
                         <!-- What floor are the amenities on? -->
@@ -431,8 +451,9 @@
                                 type="text"
                                 :value="d.other?.amenitiesFloor || ''"
                                 @input="handleDataChange('other.amenitiesFloor', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.amenitiesFloor'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors['other.amenitiesFloor']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.amenitiesFloor']) ? validationErrors['other.amenitiesFloor'][0] : validationErrors['other.amenitiesFloor'] }}</p>
                         </div>
 
                        
@@ -444,8 +465,9 @@
                                 type="text"
                                 :value="d.other?.bikeStorageLocation || ''"
                                 @input="handleDataChange('other.bikeStorageLocation', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.bikeStorageLocation'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors['other.bikeStorageLocation']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.bikeStorageLocation']) ? validationErrors['other.bikeStorageLocation'][0] : validationErrors['other.bikeStorageLocation'] }}</p>
                         </div>
                     </div>
 
@@ -456,8 +478,9 @@
                             :value="d.other?.amenitiesNotes || ''"
                             @input="handleDataChange('other.amenitiesNotes', $event.target.value)"
                             rows="5"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl resize-y', validationErrors['other.amenitiesNotes'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                         ></textarea>
+                        <p v-if="validationErrors['other.amenitiesNotes']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.amenitiesNotes']) ? validationErrors['other.amenitiesNotes'][0] : validationErrors['other.amenitiesNotes'] }}</p>
                     </div>
                 </div>
             </div>
@@ -500,9 +523,13 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
+    validationErrors: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
-const emit = defineEmits(['data-change']);
+const emit = defineEmits(['data-change', 'clear-error']);
 
 const isOpen = ref(true);
 const isSuiteTenantOpen = ref(true);
@@ -555,6 +582,10 @@ const suiteTenants = computed(() => {
 
 const handleDataChange = (path, value) => {
     emit('data-change', path, value);
+    // Clear error when field is updated
+    if (props.validationErrors[path]) {
+        emit('clear-error', path);
+    }
 };
 
 const handleSuiteTenantChange = (index, field, value) => {
@@ -564,6 +595,11 @@ const handleSuiteTenantChange = (index, field, value) => {
         [field]: value
     };
     emit('data-change', 'other.suiteTenants', currentTenants);
+    // Clear error when field is updated
+    const errorKey = `other.suiteTenants.${index}.${field}`;
+    if (props.validationErrors[errorKey]) {
+        emit('clear-error', errorKey);
+    }
 };
 
 const addSuiteTenant = () => {
@@ -594,6 +630,11 @@ const handleMaintenanceFrequencyChange = (label, value) => {
     const frequencies = { ...(d.value.other?.maintenanceFrequencies || {}) };
     frequencies[label] = value;
     handleDataChange('other.maintenanceFrequencies', frequencies);
+    // Clear error when field is updated
+    const errorKey = `other.maintenanceFrequencies.${label}`;
+    if (props.validationErrors[errorKey]) {
+        emit('clear-error', errorKey);
+    }
 };
 
 const formatMoveInFees = (value) => {
@@ -615,6 +656,10 @@ const handleMoveInFeesChange = (value) => {
         cleaned = parts[0] + '.' + parts[1].substring(0, 2);
     }
     handleDataChange('other.moveInFees', cleaned);
+    // Clear error when field is updated
+    if (props.validationErrors['other.moveInFees']) {
+        emit('clear-error', 'other.moveInFees');
+    }
 };
 </script>
 

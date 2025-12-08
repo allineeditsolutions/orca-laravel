@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\PropertyDetailsController;
 
 // Example API routes
 Route::get('/test', function () {
@@ -91,4 +92,7 @@ Route::post('/complycube/create-verification-token', function (Illuminate\Http\R
         ], 500);
     }
 });
+
+// Property Details Routes
+Route::post('/property-details', [PropertyDetailsController::class, 'store']);
 

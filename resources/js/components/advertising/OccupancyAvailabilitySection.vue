@@ -34,7 +34,7 @@
                         <select
                             :value="d.occupancy?.availableAsap || ''"
                             @change="handleDataChange('occupancy.availableAsap', $event.target.value)"
-                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
+                            :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['occupancy.availableAsap'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                         >
                             <option value="">-- Select --</option>
                             <option v-for="opt in ['Owner Occupied', 'Tenant Occupied', 'Vacant']" :key="opt" :value="opt">{{ opt }}</option>
@@ -45,6 +45,7 @@
                             </svg>
                         </div>
                     </div>
+                    <p v-if="validationErrors['occupancy.availableAsap']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['occupancy.availableAsap']) ? validationErrors['occupancy.availableAsap'][0] : validationErrors['occupancy.availableAsap'] }}</p>
 
                     <div v-if="d.occupancy?.availableAsap === 'Tenant Occupied'" class="space-y-4 mt-2 lg:mt-6">
                         <div>
@@ -54,9 +55,10 @@
                                     type="date"
                                     :value="d.occupancy?.tenantVacatingDate || ''"
                                     @change="handleDataChange('occupancy.tenantVacatingDate', $event.target.value)"
-                                    class="w-full lg:w-60 p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
+                                    :class="['w-full lg:w-60 p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['occupancy.tenantVacatingDate'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                 />
                             </div>
+                            <p v-if="validationErrors['occupancy.tenantVacatingDate']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['occupancy.tenantVacatingDate']) ? validationErrors['occupancy.tenantVacatingDate'][0] : validationErrors['occupancy.tenantVacatingDate'] }}</p>
                         </div>
 
                         <p class="text-red-500 text-sm sm:text-base">If currently Tenanted, please provide the Tenant Name and Contact Information</p>
@@ -118,8 +120,9 @@
                                                 :value="tenant.name || ''"
                                                 @input="handleTenantChange(index, 'name', $event.target.value)"
                                                 placeholder="Tenant Name"
-                                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`occupancy.tenants.${index}.name`] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                             />
+                                            <p v-if="validationErrors[`occupancy.tenants.${index}.name`]" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors[`occupancy.tenants.${index}.name`]) ? validationErrors[`occupancy.tenants.${index}.name`][0] : validationErrors[`occupancy.tenants.${index}.name`] }}</p>
                                         </div>
                                         <div class="bg-gray-50 rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
                                             <label class="flex items-center gap-2 text-base sm:text-lg lg:text-md text-gray-800 mb-2">
@@ -130,8 +133,9 @@
                                                 :value="tenant.phone || ''"
                                                 @input="handleTenantChange(index, 'phone', $event.target.value)"
                                                 placeholder="(000) 000-0000"
-                                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`occupancy.tenants.${index}.phone`] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                             />
+                                            <p v-if="validationErrors[`occupancy.tenants.${index}.phone`]" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors[`occupancy.tenants.${index}.phone`]) ? validationErrors[`occupancy.tenants.${index}.phone`][0] : validationErrors[`occupancy.tenants.${index}.phone`] }}</p>
                                         </div>
                                         <div class="bg-gray-50 rounded-2xl p-3 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
                                             <label class="flex items-center gap-2 text-base sm:text-lg lg:text-md text-gray-800 mb-2">
@@ -142,8 +146,9 @@
                                                 :value="tenant.email || ''"
                                                 @input="handleTenantChange(index, 'email', $event.target.value)"
                                                 placeholder="Tenant Email Address"
-                                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`occupancy.tenants.${index}.email`] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                             />
+                                            <p v-if="validationErrors[`occupancy.tenants.${index}.email`]" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors[`occupancy.tenants.${index}.email`]) ? validationErrors[`occupancy.tenants.${index}.email`][0] : validationErrors[`occupancy.tenants.${index}.email`] }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -204,7 +209,7 @@
                                 <select
                                     :value="d.occupancy?.renovationPlans || ''"
                                     @change="handleDataChange('occupancy.renovationPlans', $event.target.value)"
-                                    class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                    :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['occupancy.renovationPlans'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                 >
                                     <option value="">-- Select --</option>
                                     <option v-for="o in yesNoOptions" :key="o" :value="o">{{ o }}</option>
@@ -215,6 +220,7 @@
                                     </svg>
                                 </div>
                             </div>
+                            <p v-if="validationErrors['occupancy.renovationPlans']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['occupancy.renovationPlans']) ? validationErrors['occupancy.renovationPlans'][0] : validationErrors['occupancy.renovationPlans'] }}</p>
                             <div v-if="d.occupancy?.renovationPlans === 'No'" class="mt-4">
                                 <label class="block mb-2 text-gray-800">Availability Date</label>
                                 <div class="relative">
@@ -312,9 +318,10 @@
                                 type="date"
                                 :value="d.occupancy?.anticipatedDate || ''"
                                 @change="handleDataChange('occupancy.anticipatedDate', $event.target.value)"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['occupancy.anticipatedDate'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                             />
                         </div>
+                        <p v-if="validationErrors['occupancy.anticipatedDate']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['occupancy.anticipatedDate']) ? validationErrors['occupancy.anticipatedDate'][0] : validationErrors['occupancy.anticipatedDate'] }}</p>
                     </div>
 
                 <!-- Long vs Short term -->
@@ -336,6 +343,7 @@
                             <span>{{ label }}</span>
                         </label>
                     </div>
+                    <p v-if="validationErrors['occupancy.rentalTerm']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['occupancy.rentalTerm']) ? validationErrors['occupancy.rentalTerm'][0] : validationErrors['occupancy.rentalTerm'] }}</p>
                     <div v-if="d.occupancy?.rentalTerm === 'Short-term, less than 1 year'" class="mt-4">
                         <label class="block mb-2 text-gray-800">Please provide the property availability information.</label>
                         <div class="relative">
@@ -356,8 +364,9 @@
                             @input="handleDataChange('occupancy.availabilityInfo', $event.target.value)"
                             placeholder="Enter property availability information"
                             rows="4"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl resize-y', validationErrors['occupancy.availabilityInfo'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                         ></textarea>
+                        <p v-if="validationErrors['occupancy.availabilityInfo']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['occupancy.availabilityInfo']) ? validationErrors['occupancy.availabilityInfo'][0] : validationErrors['occupancy.availabilityInfo'] }}</p>
                     </div>
                 </div>
             </div>
@@ -397,6 +406,10 @@ const props = defineProps({
     onBack: Function,
     onNext: Function,
     formData: {
+        type: Object,
+        default: () => ({}),
+    },
+    validationErrors: {
         type: Object,
         default: () => ({}),
     },

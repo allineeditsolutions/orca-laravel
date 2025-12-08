@@ -59,8 +59,9 @@
                                 :value="formData.streetAddress"
                                 @input="handleChange('streetAddress', $event.target.value)"
                                 placeholder="Street Address*"
-                                class="p-2 w-full w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['p-2 w-full border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.streetAddress ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors.streetAddress" class="mt-1 text-sm text-red-600">{{ validationErrors.streetAddress }}</p>
                         </div>
                     </div>
 
@@ -76,8 +77,9 @@
                                 :value="formData.city"
                                 @input="handleChange('city', $event.target.value)"
                                 placeholder="City*"
-                                class="w-full p-2  border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.city ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors.city" class="mt-1 text-sm text-red-600">{{ validationErrors.city }}</p>
                         </div>
 
                         <!-- Province -->
@@ -89,7 +91,7 @@
                                 <select
                                     :value="formData.province"
                                     @change="handleChange('province', $event.target.value)"
-                                    class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                    :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.province ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                 >
                                     <option value="">Select Province</option>
                                     <option v-for="province in provinces" :key="province" :value="province">
@@ -102,6 +104,7 @@
                                     </svg>
                                 </div>
                             </div>
+                            <p v-if="validationErrors.province" class="mt-1 text-sm text-red-600">{{ validationErrors.province }}</p>
                         </div>
 
                         <!-- Postal / ZIP Code -->
@@ -114,8 +117,9 @@
                                 :value="formData.postalCode"
                                 @input="handleChange('postalCode', $event.target.value)"
                                 placeholder="Postal / ZIP Code*"
-                                class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.postalCode ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                             />
+                            <p v-if="validationErrors.postalCode" class="mt-1 text-sm text-red-600">{{ validationErrors.postalCode }}</p>
                         </div>
                     </div>
                 </div>
@@ -131,6 +135,10 @@ const props = defineProps({
     formData: {
         type: Object,
         required: true,
+    },
+    validationErrors: {
+        type: Object,
+        default: () => ({}),
     },
 });
 
@@ -152,6 +160,7 @@ const provinces = [
     'Saskatchewan',
     'Yukon',
     'Northwest Territories',
+    'Philippines',
 ];
 
 const handleChange = (field, value) => {

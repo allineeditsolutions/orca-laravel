@@ -10,14 +10,17 @@
                     <div v-if="currentStep === 1" class="p-4 space-y-5 sm:space-y-6 md:space-y-2 ">
                         <OwnerInformationSection
                             :form-data="formData"
+                            :validation-errors="validationErrors"
                             @data-change="handleDataChange"
                         />
                         <PointOfContactSection
                             :form-data="formData"
+                            :validation-errors="validationErrors"
                             @data-change="handleDataChange"
                         />
                         <MailingInformationSection
                             :form-data="formData"
+                            :validation-errors="validationErrors"
                             @data-change="handleDataChange"
                         />
                     </div>
@@ -25,7 +28,8 @@
                         <RentalPropertyInformationSection 
                             :on-back="handleBack" 
                             :on-next="handleNext" 
-                            :form-data="formData" 
+                            :form-data="formData"
+                            :validation-errors="validationErrors"
                             @data-change="handleDataChange" 
                         />
                     </div>
@@ -33,7 +37,8 @@
                         <OccupancyAvailabilitySection 
                             :on-back="handleBack" 
                             :on-next="handleNext" 
-                            :form-data="formData" 
+                            :form-data="formData"
+                            :validation-errors="validationErrors"
                             @data-change="handleDataChange" 
                         />
                     </div>
@@ -41,7 +46,8 @@
                         <UtilitiesInclusionsRestrictionsSection 
                             :on-back="handleBack" 
                             :on-next="handleNext" 
-                            :form-data="formData" 
+                            :form-data="formData"
+                            :validation-errors="validationErrors"
                             @data-change="handleDataChange" 
                         />
                     </div>
@@ -50,7 +56,9 @@
                             :on-back="handleBack" 
                             :on-next="handleNext" 
                             :form-data="formData" 
-                            @data-change="handleDataChange" 
+                            :validation-errors="validationErrors"
+                            @data-change="handleDataChange"
+                            @clear-error="clearValidationError"
                         />
                     </div>
                     <div v-if="currentStep === 6" class="p-4 space-y-5 sm:space-y-6 md:space-y-8">
@@ -93,6 +101,8 @@ import ReviewSection from '@/components/advertising/ReviewSection.vue';
 
 const currentStep = ref(1);
 const isSubmitted = ref(false);
+const isSubmitting = ref(false);
+const validationErrors = ref({});
 const steps = [
     { number: 1, title: 'Homeowner Detail' },
     { number: 2, title: 'Rental Property Information & Features' },
@@ -104,91 +114,114 @@ const steps = [
 
 const formData = reactive({
     // Owner Information
-    businessLegalName: '',
-    ownerEmail: '',
-    phone: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    residentStatus: 'Resident',
+    businessLegalName: 'Pacific Properties Ltd.',
+    ownerEmail: 'rogz@gmail.com',
+    phone: '(604) 789-2345',
+    firstName: 'Sarah',
+    lastName: 'Williams',
+    dateOfBirth: '1990-08-22',
+    residentStatus: 'Non-Resident',
     coOwners: [],
     
     // Point of Contact
-    pointOfContact: 'Same as Main Owner',
+    pointOfContact: 'Other(Specify)',
     otherPointOfContact: '',
+    pointOfContactFirstName: 'Michael',
+    pointOfContactEmail: 'michael.agent@email.com',
+    pointOfContactPhone: '(604) 234-5678',
     
     // Mailing Information
-    unitSuite: '',
-    streetAddress: '',
-    city: '',
-    province: '',
-    postalCode: '',
+    unitSuite: 'Apt 1505',
+    streetAddress: '888 Granville Street',
+    city: 'Vancouver',
+    province: 'Philippines',
+    postalCode: 'V6C 1A2',
 
     // Step 2 - Rental Property Information & Features
     rental: {
-        unitSuite: '',
-        streetAddress: '',
-        city: '',
-        province: '',
-        postalCode: '',
-        neighborhood: '',
-        yearBuilt: '',
-        totalFloorArea: '',
-        keys: '',
-        bedrooms: '',
-        bathrooms: '',
-        den: '',
-        balconyPatio: '',
-        storage: '',
-        fireplaceTypes: [],
-        alarmCode: '',
-        parking: [],
-        laundry: '',
-        heating: [],
+        unitSuite: 'Suite 305',
+        streetAddress: '456 Oak Avenue',
+        city: 'Burnaby',
+        province: 'British Columbia',
+        postalCode: 'V5H 2B3',
+        neighborhood: 'Metrotown',
+        yearBuilt: '2020',
+        totalFloorArea: '1500',
+        keys: 'Key will be left in lockbox',
+        keysOther: '',
+        bedrooms: '3',
+        bathrooms: '2.5',
+        den: 'No',
+        balconypatio: 'Yes',
+        storage: 'Yes',
+        fireplaceTypes: ['Electric Fireplace'],
+        alarmCode: '5678',
+        parking: {
+            'Underground': '2',
+        },
+        parkingLevelStall: 'P2-12',
+        laundry: 'In-Suite',
+        heating: ['Baseboard Heating'],
+        heatingType: '',
     },
 
     // Step 3 - Occupancy & Availability
     occupancy: {
-        availableAsap: '',
-        renovationPlans: '',
-        fixedTermOnly: '',
-        boostAd: '',
-        anticipatedDate: '',
-        rentalTerm: '',
+        availableAsap: 'Vacant',
+        renovationPlans: 'No',
+        fixedTermOnly: 'Yes',
+        boostAd: 'No',
+        anticipatedDate: '2025-03-15',
+        rentalTerm: 'Fixed-term, 6 months',
+        tenantVacatingDate: '',
+        tenants: [],
+        availabilityInfo: 'Available immediately for viewing',
+        shortTermAvailabilityInfo: '',
+        expectedRenovations: 'Minor paint touch-ups planned',
+        fixedTermTenancyDescription: '6-month lease with option to renew',
     },
 
     // Step 4 - Utilities/Inclusions/Restrictions
     utilities: {
-        water: '',
-        electricity: '',
-        gas: '',
-        heat: '',
-        inclusions: [],
-        furnishing: '',
-        pets: '',
-        propertyType: '',
+        water: 'Included in Rent',
+        electricity: 'Split',
+        electricitySplitDetail: '50',
+        gas: 'Not Included in Rent',
+        heat: 'Included in Rent',
+        inclusions: ['Stove/Oven/Fridge', 'Dishwasher', 'Washer', 'Dryer', 'Microwave', 'Window coverings (blinds, curtains)', 'Wifi', 'Air Conditioning'],
+        furnishing: 'Furnished',
+        pets: 'No',
+        propertyType: 'Townhouse',
     },
 
     // Step 5 - Other Details
     other: {
-        strataCompany: '',
-        strataManagerName: '',
-        strataPhone: '',
-        strataEmail: '',
-        buildingManagerName: '',
-        buildingManagerPhone: '',
-        buildingManagerEmail: '',
-        moveInFees: '',
-        amenities: [],
-        signUpFront: '',
-        maintenance: [],
-        sprinklersService: '',
-        hasSelfContainedSuite: '',
-        fuseBoxLocation: '',
-        amenitiesFloor: '',
-        bikeStorageLocation: '',
-        garbageInfo: '',
-        amenitiesNotes: '',
+        strataCompany: 'Metro Strata Management',
+        strataManagerName: 'David Chen',
+        strataPhone: '(604) 345-6789',
+        strataEmail: 'david.chen@metrostata.ca',
+        buildingManagerName: 'Lisa Anderson',
+        buildingManagerPhone: '(604) 456-7890',
+        buildingManagerEmail: 'lisa.anderson@buildingmgmt.ca',
+        moveInFees: '500.00',
+        amenities: ['Gym', 'Pool', 'Concierge', 'Bike Storage'],
+        signUpFront: 'Yes',
+        maintenance: ['Gutter Maintenance', 'Heating system'],
+        maintenanceFrequencies: {
+            'Gutter Maintenance': 'Twice a year',
+            'Heating system': 'Annual maintenance is preferred'
+        },
+        sprinklersService: 'Yes',
+        hasSelfContainedSuite: 'No',
+        suiteBedrooms: '',
+        suiteTenanted: '',
+        suiteTenants: [],
+        suiteOtherDetails: '',
+        fuseBox: 'Located in utility room on ground floor',
+        amenitiesFloor: '2nd floor',
+        bikeStorageLocation: 'B1-23',
+        garbageInfo: 'Garbage pickup every Tuesday and Friday',
+        amenitiesNotes: 'Gym and pool are located on the 2nd floor. Concierge is available 24/7 at the main entrance.',
         virtualTour: '',
         listingUrl: '',
     },
@@ -205,9 +238,343 @@ const handleDataChange = (path, value) => {
         obj = obj[k];
     }
     obj[keys[keys.length - 1]] = value;
+    
+    // Clear validation error for this field when user starts typing
+    const errorKey = path;
+    if (validationErrors.value[errorKey]) {
+        delete validationErrors.value[errorKey];
+    }
+};
+
+const validateStep1 = () => {
+    const errors = {};
+    
+    // Owner Information - Required fields
+    if (!formData.ownerEmail || formData.ownerEmail.trim() === '') {
+        errors.ownerEmail = 'Owner Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.ownerEmail)) {
+        errors.ownerEmail = 'Please enter a valid email address';
+    }
+    
+    if (!formData.phone || formData.phone.trim() === '') {
+        errors.phone = 'Phone is required';
+    }
+    
+    if (!formData.firstName || formData.firstName.trim() === '') {
+        errors.firstName = 'First Name is required';
+    }
+    
+    if (!formData.lastName || formData.lastName.trim() === '') {
+        errors.lastName = 'Last Name is required';
+    }
+    
+    if (!formData.dateOfBirth || formData.dateOfBirth.trim() === '') {
+        errors.dateOfBirth = 'Date of Birth is required';
+    }
+    
+    if (!formData.residentStatus || formData.residentStatus.trim() === '') {
+        errors.residentStatus = 'Resident Status is required';
+    }
+    
+    // Point of Contact - If "Other(Specify)" is selected, validate other contact fields
+    if (formData.pointOfContact === 'Other(Specify)') {
+        if (!formData.pointOfContactFirstName || formData.pointOfContactFirstName.trim() === '') {
+            errors.pointOfContactFirstName = 'First Name is required';
+        }
+        if (!formData.pointOfContactEmail || formData.pointOfContactEmail.trim() === '') {
+            errors.pointOfContactEmail = 'Email Address is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.pointOfContactEmail)) {
+            errors.pointOfContactEmail = 'Please enter a valid email address';
+        }
+        if (!formData.pointOfContactPhone || formData.pointOfContactPhone.trim() === '') {
+            errors.pointOfContactPhone = 'Phone is required';
+        }
+    }
+    
+    // Mailing Information - Required fields
+    if (!formData.streetAddress || formData.streetAddress.trim() === '') {
+        errors.streetAddress = 'Street Address is required';
+    }
+    
+    if (!formData.city || formData.city.trim() === '') {
+        errors.city = 'City is required';
+    }
+    
+    if (!formData.province || formData.province.trim() === '') {
+        errors.province = 'Province is required';
+    }
+    
+    if (!formData.postalCode || formData.postalCode.trim() === '') {
+        errors.postalCode = 'Postal / ZIP Code is required';
+    }
+    
+    validationErrors.value = errors;
+    return Object.keys(errors).length === 0;
+};
+
+const validateStep2 = () => {
+    const errors = {};
+    const rental = formData.rental || {};
+    
+    // Address fields - Required
+    if (!rental.streetAddress || rental.streetAddress.trim() === '') {
+        errors['rental.streetAddress'] = 'Street Address is required';
+    }
+    
+    if (!rental.city || rental.city.trim() === '') {
+        errors['rental.city'] = 'City is required';
+    }
+    
+    if (!rental.province || rental.province.trim() === '') {
+        errors['rental.province'] = 'Province is required';
+    }
+    
+    if (!rental.postalCode || rental.postalCode.trim() === '') {
+        errors['rental.postalCode'] = 'Postal / ZIP Code is required';
+    }
+    
+    // Total Floor Area - Required
+    if (!rental.totalFloorArea || rental.totalFloorArea.trim() === '') {
+        errors['rental.totalFloorArea'] = 'Total Floor Area is required';
+    }
+    
+    // Keys - Required
+    if (!rental.keys || rental.keys.trim() === '') {
+        errors['rental.keys'] = 'Keys information is required';
+    }
+    
+    // If keys is "Other", validate keysOther
+    if (rental.keys === 'Other' && (!rental.keysOther || rental.keysOther.trim() === '')) {
+        errors['rental.keysOther'] = 'Please provide details about key access';
+    }
+    
+    // Property Details - Required
+    const bedrooms = rental.bedrooms !== undefined && rental.bedrooms !== null ? String(rental.bedrooms) : '';
+    if (!bedrooms || bedrooms.trim() === '') {
+        errors['rental.bedrooms'] = 'Bedrooms is required';
+    }
+    
+    const bathrooms = rental.bathrooms !== undefined && rental.bathrooms !== null ? String(rental.bathrooms) : '';
+    if (!bathrooms || bathrooms.trim() === '') {
+        errors['rental.bathrooms'] = 'Bathrooms is required';
+    }
+    
+    const den = rental.den !== undefined && rental.den !== null ? String(rental.den) : '';
+    if (!den || den.trim() === '') {
+        errors['rental.den'] = 'Den is required';
+    }
+    
+    // Note: featureKeyMap uses 'balconypatio' (all lowercase)
+    const balconyPatio = rental.balconypatio || rental.balconyPatio || '';
+    if (!balconyPatio || String(balconyPatio).trim() === '') {
+        errors['rental.balconypatio'] = 'Balcony/Patio is required';
+    }
+    
+    const storage = rental.storage !== undefined && rental.storage !== null ? String(rental.storage) : '';
+    if (!storage || storage.trim() === '') {
+        errors['rental.storage'] = 'Storage is required';
+    }
+    
+    // Laundry - Required
+    if (!rental.laundry || rental.laundry.trim() === '') {
+        errors['rental.laundry'] = 'Laundry is required';
+    }
+    
+    // Heating - Required (at least one must be selected)
+    if (!rental.heating || !Array.isArray(rental.heating) || rental.heating.length === 0) {
+        errors['rental.heating'] = 'At least one heating type is required';
+    }
+    
+    // If heating includes "Other", validate heatingType
+    if (rental.heating && Array.isArray(rental.heating) && rental.heating.includes('Other')) {
+        if (!rental.heatingType || rental.heatingType.trim() === '') {
+            errors['rental.heatingType'] = 'Heating Type is required';
+        }
+    }
+    
+    validationErrors.value = errors;
+    return Object.keys(errors).length === 0;
+};
+
+const validateStep3 = () => {
+    const errors = {};
+    const occupancy = formData.occupancy || {};
+    
+    // The property is currently - Required
+    if (!occupancy.availableAsap || occupancy.availableAsap.trim() === '') {
+        errors['occupancy.availableAsap'] = 'The property is currently is required';
+    }
+    
+    // If Tenant Occupied, validate tenant vacating date and tenant information
+    if (occupancy.availableAsap === 'Tenant Occupied') {
+        if (!occupancy.tenantVacatingDate || occupancy.tenantVacatingDate.trim() === '') {
+            errors['occupancy.tenantVacatingDate'] = 'When is the current Tenant vacating is required';
+        }
+        
+        // Validate tenants array
+        const tenants = occupancy.tenants || [];
+        if (!Array.isArray(tenants) || tenants.length === 0) {
+            // If no tenants, add a general error
+            errors['occupancy.tenants.0.name'] = 'At least one tenant is required';
+        } else {
+            tenants.forEach((tenant, index) => {
+                if (!tenant || !tenant.name || tenant.name.trim() === '') {
+                    errors[`occupancy.tenants.${index}.name`] = 'Tenant Name is required';
+                }
+                if (!tenant || !tenant.phone || tenant.phone.trim() === '') {
+                    errors[`occupancy.tenants.${index}.phone`] = 'Tenant Phone is required';
+                }
+                if (!tenant || !tenant.email || tenant.email.trim() === '') {
+                    errors[`occupancy.tenants.${index}.email`] = 'Tenant Email Address is required';
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(tenant.email)) {
+                    errors[`occupancy.tenants.${index}.email`] = 'Please enter a valid email address';
+                }
+            });
+        }
+    }
+    
+    // Is the property available to be rented ASAP? - Required
+    if (!occupancy.renovationPlans || occupancy.renovationPlans.trim() === '') {
+        errors['occupancy.renovationPlans'] = 'Is the property available to be rented ASAP is required';
+    }
+    
+    // Anticipated occupancy date - Required
+    if (!occupancy.anticipatedDate || occupancy.anticipatedDate.trim() === '') {
+        errors['occupancy.anticipatedDate'] = 'Anticipated occupancy date for Tenants to move in is required';
+    }
+    
+    // Is this going to be a long-term or short-term rental? - Required
+    if (!occupancy.rentalTerm || occupancy.rentalTerm.trim() === '') {
+        errors['occupancy.rentalTerm'] = 'Is this going to be a long-term or short-term rental is required';
+    }
+    
+    // If rental term is "Other", validate availabilityInfo
+    if (occupancy.rentalTerm === 'Other') {
+        if (!occupancy.availabilityInfo || occupancy.availabilityInfo.trim() === '') {
+            errors['occupancy.availabilityInfo'] = 'Availability is required';
+        }
+    }
+    
+    validationErrors.value = errors;
+    return Object.keys(errors).length === 0;
+};
+
+const validateStep4 = () => {
+    const errors = {};
+    const utilities = formData.utilities || {};
+    
+    // Property Details - All utilities are required (water, electricity, gas, heat)
+    if (!utilities.water || utilities.water.trim() === '') {
+        errors['utilities.water'] = 'Water is required';
+    }
+    
+    if (!utilities.electricity || utilities.electricity.trim() === '') {
+        errors['utilities.electricity'] = 'Electricity is required';
+    }
+    
+    if (!utilities.gas || utilities.gas.trim() === '') {
+        errors['utilities.gas'] = 'Gas is required';
+    }
+    
+    if (!utilities.heat || utilities.heat.trim() === '') {
+        errors['utilities.heat'] = 'Heat is required';
+    }
+    
+    // If inclusions includes "Other", validate inclusionsOtherDetail
+    if (utilities.inclusions && Array.isArray(utilities.inclusions) && utilities.inclusions.includes('Other')) {
+        if (!utilities.inclusionsOtherDetail || utilities.inclusionsOtherDetail.trim() === '') {
+            errors['utilities.inclusionsOtherDetail'] = 'Please provide details about the other items is required';
+        }
+    }
+    
+    // The Property is (furnishing) - Required
+    if (!utilities.furnishing || utilities.furnishing.trim() === '') {
+        errors['utilities.furnishing'] = 'The Property is required';
+    }
+    
+    // Type of Property - Required
+    if (!utilities.propertyType || utilities.propertyType.trim() === '') {
+        errors['utilities.propertyType'] = 'Type of Property is required';
+    }
+    
+    // If propertyType is "Other", validate propertyTypeOtherDetail
+    if (utilities.propertyType === 'Other') {
+        if (!utilities.propertyTypeOtherDetail || utilities.propertyTypeOtherDetail.trim() === '') {
+            errors['utilities.propertyTypeOtherDetail'] = 'Property Type is required';
+        }
+    }
+    
+    validationErrors.value = errors;
+    return Object.keys(errors).length === 0;
 };
 
 const handleNext = () => {
+    // Validate step 1 before proceeding
+    if (currentStep.value === 1) {
+        if (!validateStep1()) {
+            // Scroll to first error
+            const firstErrorField = Object.keys(validationErrors.value)[0];
+            const errorElement = document.querySelector(`[name="${firstErrorField}"]`) || 
+                                document.querySelector(`input[placeholder*="${firstErrorField}"]`);
+            if (errorElement) {
+                errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                errorElement.focus();
+            }
+            return;
+        }
+    }
+    
+    // Validate step 2 before proceeding
+    if (currentStep.value === 2) {
+        if (!validateStep2()) {
+            // Scroll to first error
+            const firstErrorField = Object.keys(validationErrors.value)[0];
+            const errorElement = document.querySelector(`[name="${firstErrorField}"]`) || 
+                                document.querySelector(`input[placeholder*="${firstErrorField}"]`) ||
+                                document.querySelector(`select[placeholder*="${firstErrorField}"]`);
+            if (errorElement) {
+                errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                errorElement.focus();
+            }
+            return;
+        }
+    }
+    
+    // Validate step 3 before proceeding
+    if (currentStep.value === 3) {
+        if (!validateStep3()) {
+            // Scroll to first error
+            const firstErrorField = Object.keys(validationErrors.value)[0];
+            const errorElement = document.querySelector(`[name="${firstErrorField}"]`) || 
+                                document.querySelector(`input[placeholder*="${firstErrorField}"]`) ||
+                                document.querySelector(`select[placeholder*="${firstErrorField}"]`);
+            if (errorElement) {
+                errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                errorElement.focus();
+            }
+            return;
+        }
+    }
+    
+    // Validate step 4 before proceeding
+    if (currentStep.value === 4) {
+        if (!validateStep4()) {
+            // Scroll to first error
+            const firstErrorField = Object.keys(validationErrors.value)[0];
+            const errorElement = document.querySelector(`[name="${firstErrorField}"]`) || 
+                                document.querySelector(`input[placeholder*="${firstErrorField}"]`) ||
+                                document.querySelector(`select[placeholder*="${firstErrorField}"]`);
+            if (errorElement) {
+                errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                errorElement.focus();
+            }
+            return;
+        }
+    }
+    
+    // Clear validation errors when moving to next step
+    validationErrors.value = {};
+    
     if (currentStep.value < steps.length) {
         currentStep.value++;
     }
@@ -219,9 +586,78 @@ const handleBack = () => {
     }
 };
 
-const handleSubmit = () => {
-    isSubmitted.value = true;
-    // TODO: submit handler - API call here
+const handleSubmit = async () => {
+    // Prevent double submission
+    if (isSubmitting.value) {
+        return;
+    }
+    
+    try {
+        isSubmitting.value = true;
+        
+        // Prepare data for API
+        const submitData = {
+            business_legal_name: formData.businessLegalName,
+            owner_email: formData.ownerEmail,
+            owner_phone: formData.phone,
+            owner_fname: formData.firstName,
+            owner_lname: formData.lastName,
+            homeowner_detail: {
+                businessLegalName: formData.businessLegalName,
+                ownerEmail: formData.ownerEmail,
+                phone: formData.phone,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                dateOfBirth: formData.dateOfBirth,
+                residentStatus: formData.residentStatus,
+                coOwners: formData.coOwners,
+                pointOfContact: formData.pointOfContact,
+                otherPointOfContact: formData.otherPointOfContact,
+                unitSuite: formData.unitSuite,
+                streetAddress: formData.streetAddress,
+                city: formData.city,
+                province: formData.province,
+                postalCode: formData.postalCode,
+            },
+            rental_info_features: formData.rental,
+            occupancy_availability: formData.occupancy,
+            utilities_inc_restrictions: formData.utilities,
+            other_details: formData.other,
+            status: 'submitted',
+        };
+
+        // Make API call
+        const response = await fetch('/api/property-details', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+            },
+            body: JSON.stringify(submitData),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            // Handle validation errors
+            if (response.status === 422 && result.errors) {
+                isSubmitting.value = false;
+                const errorMessages = Object.values(result.errors).flat().join('\n');
+                alert('Validation errors:\n' + errorMessages);
+                return;
+            }
+            throw new Error(result.message || 'Failed to save property details');
+        }
+
+        // Success
+        isSubmitted.value = true;
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred while saving: ' + error.message);
+    } finally {
+        isSubmitting.value = false;
+    }
 };
 </script>
 

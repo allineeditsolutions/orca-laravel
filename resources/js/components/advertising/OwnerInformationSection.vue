@@ -50,15 +50,16 @@
                     <!-- Owner Email -->
                     <div >
                         <label class="flex items-center gap-2 text-base sm:text-lg lg:text-md text-gray-800 mb-2">
-                            Owner Email is required <span class="text-red-500 text-xl">*</span>
+                            Owner Email <span class="text-red-500 text-xl">*</span>
                         </label>
                         <input
                             type="email"
                             :value="formData.ownerEmail"
                             @input="handleChange('ownerEmail', $event.target.value)"
                             placeholder="Owner Email is required*"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.ownerEmail ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                         />
+                        <p v-if="validationErrors.ownerEmail" class="mt-1 text-sm text-red-600">{{ validationErrors.ownerEmail }}</p>
                     </div>
 
                     <!-- Phone -->
@@ -69,10 +70,11 @@
                         <input
                             type="tel"
                             :value="formData.phone"
-                            @input="handleChange('phone', $event.target.value)"
+                            @input="handlePhoneChange($event.target.value)"
                             placeholder="(000) 000-0000"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.phone ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                         />
+                        <p v-if="validationErrors.phone" class="mt-1 text-sm text-red-600">{{ validationErrors.phone }}</p>
                     </div>
                 </div>
 
@@ -98,8 +100,9 @@
                             :value="formData.firstName"
                             @input="handleChange('firstName', $event.target.value)"
                             placeholder="First Name*"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.firstName ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                         />
+                        <p v-if="validationErrors.firstName" class="mt-1 text-sm text-red-600">{{ validationErrors.firstName }}</p>
                     </div>
                     <div >
                         <label class="flex items-center gap-2 text-base sm:text-lg lg:text-md text-gray-800 mb-2">
@@ -121,8 +124,9 @@
                             :value="formData.lastName"
                             @input="handleChange('lastName', $event.target.value)"
                             placeholder="Last Name*"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.lastName ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                         />
+                        <p v-if="validationErrors.lastName" class="mt-1 text-sm text-red-600">{{ validationErrors.lastName }}</p>
                     </div>
                     <div >
                         <label class="flex items-center gap-2 text-base sm:text-lg lg:text-md text-gray-800 mb-2">
@@ -143,8 +147,9 @@
                             type="date"
                             :value="formData.dateOfBirth"
                             @input="handleChange('dateOfBirth', $event.target.value)"
-                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.dateOfBirth ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                         />
+                        <p v-if="validationErrors.dateOfBirth" class="mt-1 text-sm text-red-600">{{ validationErrors.dateOfBirth }}</p>
                     </div>
                 </div>
 
@@ -179,6 +184,7 @@
                             <span class="text-gray-800 ">Non-Resident</span>
                         </label>
                     </div>
+                    <p v-if="validationErrors.residentStatus" class="mt-1 text-sm text-red-600">{{ validationErrors.residentStatus }}</p>
                 </div>
 
                 
@@ -263,7 +269,7 @@
                                 <input
                                     type="tel"
                                     :value="coOwner.phone || ''"
-                                    @input="updateCoOwner(index, 'phone', $event.target.value)"
+                                    @input="handleCoOwnerPhoneChange(index, $event.target.value)"
                                     placeholder="(000) 000-0000"
                                     class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
                                 />
@@ -366,14 +372,47 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    validationErrors: {
+        type: Object,
+        default: () => ({}),
+    },
 });
 
 const emit = defineEmits(['data-change']);
 
 const isOpen = ref(true);
 
+const formatPhoneNumber = (value) => {
+    // Remove all non-digit characters
+    const phoneNumber = value.replace(/\D/g, '');
+    
+    // Limit to 10 digits
+    const limitedNumber = phoneNumber.slice(0, 10);
+    
+    // Format as (000) 000-0000
+    if (limitedNumber.length === 0) {
+        return '';
+    } else if (limitedNumber.length <= 3) {
+        return `(${limitedNumber}`;
+    } else if (limitedNumber.length <= 6) {
+        return `(${limitedNumber.slice(0, 3)}) ${limitedNumber.slice(3)}`;
+    } else {
+        return `(${limitedNumber.slice(0, 3)}) ${limitedNumber.slice(3, 6)}-${limitedNumber.slice(6)}`;
+    }
+};
+
 const handleChange = (field, value) => {
     emit('data-change', field, value);
+};
+
+const handlePhoneChange = (value) => {
+    const formatted = formatPhoneNumber(value);
+    emit('data-change', 'phone', formatted);
+};
+
+const handleCoOwnerPhoneChange = (index, value) => {
+    const formatted = formatPhoneNumber(value);
+    updateCoOwner(index, 'phone', formatted);
 };
 
 const addCoOwner = () => {

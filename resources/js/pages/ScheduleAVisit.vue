@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 flex items-start justify-center px-2 sm:px-4 pt-2 pb-4 sm:pb-8 md:pb-12 relative">
+    <div class="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 flex flex-col relative">
         <!-- Top Accent Bar -->
         <div class="fixed top-0 left-0 right-0 bg-black h-2 z-10"></div>
         
@@ -10,7 +10,9 @@
             <div class="absolute -bottom-8 left-1/2 w-72 h-72 bg-teal-50 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
         
-        <div class="w-full max-w-4xl mt-10 sm:mt-14 md:mt-18 relative z-0">
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto px-2 sm:px-4 pt-2 pb-24 sm:pb-28 md:pb-32" style="scrollbar-width: thin; scrollbar-color: #9ca3af #f3f4f6;">
+            <div class="w-full max-w-4xl mx-auto mt-10 sm:mt-14 md:mt-18 relative z-0">
             <!-- Success Message Screen -->
             <div v-if="isSubmitted" class="p-4 space-y-6">
                 <div class="border border-gray-200 rounded-2xl bg-white shadow-2xl backdrop-blur-sm">
@@ -57,10 +59,12 @@
                                 <input
                                     type="text"
                                     v-model="formData.firstName"
+                                    @input="clearValidationError('first_name')"
                                     required
-                                    class="w-full p-3.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-md shadow-sm focus:shadow-lg"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.first_name ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                     placeholder="Enter your first name"
                                 />
+                                <p v-if="validationErrors.first_name" class="mt-1 text-sm text-red-600">{{ validationErrors.first_name }}</p>
                             </div>
                             <div>
                                 <label class="block mb-2 text-gray-800 font-medium">
@@ -69,10 +73,12 @@
                                 <input
                                     type="text"
                                     v-model="formData.lastName"
+                                    @input="clearValidationError('last_name')"
                                     required
-                                    class="w-full p-3.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-md shadow-sm focus:shadow-lg"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.last_name ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                     placeholder="Enter your last name"
                                 />
+                                <p v-if="validationErrors.last_name" class="mt-1 text-sm text-red-600">{{ validationErrors.last_name }}</p>
                             </div>
                         </div>
 
@@ -84,11 +90,13 @@
                                 </label>
                                 <input
                                     type="tel"
-                                    v-model="formData.phoneNumber"
+                                    :value="formData.phoneNumber"
+                                    @input="handlePhoneChange($event.target.value)"
                                     required
-                                    class="w-full p-3.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-md shadow-sm focus:shadow-lg"
-                                    placeholder="(778) 465-5658"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.phone_number ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                    placeholder="(000) 000-0000"
                                 />
+                                <p v-if="validationErrors.phone_number" class="mt-1 text-sm text-red-600">{{ validationErrors.phone_number }}</p>
                             </div>
                             <div>
                                 <label class="block mb-2 text-gray-800 font-medium">
@@ -97,10 +105,12 @@
                                 <input
                                     type="email"
                                     v-model="formData.email"
+                                    @input="clearValidationError('email')"
                                     required
-                                    class="w-full p-3.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-md shadow-sm focus:shadow-lg"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.email ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                     placeholder="email@gmail.com"
                                 />
+                                <p v-if="validationErrors.email" class="mt-1 text-sm text-red-600">{{ validationErrors.email }}</p>
                             </div>
                         </div>
 
@@ -126,7 +136,7 @@
                             <label class="block mb-3 text-gray-800 font-medium">
                                 Preferred Method of Communication <span class="text-red-500">*</span>
                             </label>
-                            <div class="space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                 <label class="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-white transition-colors duration-200">
                                     <input
                                         type="checkbox"
@@ -193,7 +203,7 @@
                                             type="time"
                                             v-model="formData.availability1.from"
                                             required
-                                            class="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 bg-white hover:border-gray-400 shadow-sm focus:shadow-md"
+                                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
                                         />
                                     </div>
                                     <div>
@@ -202,7 +212,7 @@
                                             type="time"
                                             v-model="formData.availability1.to"
                                             required
-                                            class="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 bg-white hover:border-gray-400 shadow-sm focus:shadow-md"
+                                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
                                         />
                                     </div>
                                 </div>
@@ -233,7 +243,7 @@
                                             type="time"
                                             v-model="formData.availability2.from"
                                             required
-                                            class="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 bg-white hover:border-gray-400 shadow-sm focus:shadow-md"
+                                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
                                         />
                                     </div>
                                     <div>
@@ -242,7 +252,7 @@
                                             type="time"
                                             v-model="formData.availability2.to"
                                             required
-                                            class="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 bg-white hover:border-gray-400 shadow-sm focus:shadow-md"
+                                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
                                         />
                                     </div>
                                 </div>
@@ -273,7 +283,7 @@
                                             type="time"
                                             v-model="formData.availability3.from"
                                             required
-                                            class="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 bg-white hover:border-gray-400 shadow-sm focus:shadow-md"
+                                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
                                         />
                                     </div>
                                     <div>
@@ -282,7 +292,7 @@
                                             type="time"
                                             v-model="formData.availability3.to"
                                             required
-                                            class="w-full p-2.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 bg-white hover:border-gray-400 shadow-sm focus:shadow-md"
+                                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
                                         />
                                     </div>
                                 </div>
@@ -296,23 +306,33 @@
                             </label>
                             <textarea
                                 v-model="formData.message"
+                                @input="clearValidationError('message')"
                                 rows="4"
                                 required
-                                class="w-full p-3.5 border-2 border-gray-200 rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-md shadow-sm focus:shadow-lg resize-y"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl resize-y', validationErrors.message ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                                 placeholder="Type your message here..."
                             ></textarea>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="pt-4 flex justify-end">
-                            <button
-                                type="submit"
-                                class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-teal-700 to-teal-800 hover:from-teal-800 hover:to-teal-900 text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95"
-                            >
-                                Schedule a Visit
-                            </button>
+                            <p v-if="validationErrors.message" class="mt-1 text-sm text-red-600">{{ validationErrors.message }}</p>
                         </div>
                     </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Fixed Footer with Submit Button -->
+        <div v-if="!isSubmitted" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-20">
+            <div class="w-full max-w-4xl mx-auto px-2 sm:px-4 py-4 sm:py-5">
+                <div class="flex justify-end">
+                    <button
+                        type="button"
+                        @click="handleSubmit"
+                        :disabled="isSubmitting"
+                        class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-teal-700 to-teal-800 hover:from-teal-800 hover:to-teal-900 text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    >
+                        <span v-if="isSubmitting">Submitting...</span>
+                        <span v-else>Schedule a Visit</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -321,6 +341,7 @@
 
 <script>
 import DatePicker from 'primevue/datepicker';
+import confetti from 'canvas-confetti';
 
 export default {
     name: 'ScheduleAVisit',
@@ -330,6 +351,8 @@ export default {
     data() {
         return {
             isSubmitted: false,
+            isSubmitting: false,
+            validationErrors: {},
             propertyAddress: '',
             formData: {
                 firstName: '',
@@ -376,44 +399,152 @@ export default {
             }
             return date;
         },
-        handleSubmit() {
-            // Validate that at least one communication method is selected
-            if (this.formData.preferredCommunication.length === 0) {
-                alert('Please select at least one preferred method of communication.');
+        formatPhoneNumber(value) {
+            // Remove all non-digit characters
+            const phoneNumber = value.replace(/\D/g, '');
+            
+            // Limit to 10 digits
+            const limitedNumber = phoneNumber.slice(0, 10);
+            
+            // Format as (000) 000-0000
+            if (limitedNumber.length === 0) {
+                return '';
+            } else if (limitedNumber.length <= 3) {
+                return `(${limitedNumber}`;
+            } else if (limitedNumber.length <= 6) {
+                return `(${limitedNumber.slice(0, 3)}) ${limitedNumber.slice(3)}`;
+            } else {
+                return `(${limitedNumber.slice(0, 3)}) ${limitedNumber.slice(3, 6)}-${limitedNumber.slice(6)}`;
+            }
+        },
+        handlePhoneChange(value) {
+            const formatted = this.formatPhoneNumber(value);
+            this.formData.phoneNumber = formatted;
+            this.clearValidationError('phone_number');
+        },
+        clearValidationError(field) {
+            if (this.validationErrors[field]) {
+                delete this.validationErrors[field];
+            }
+        },
+        async handleSubmit() {
+            // Prevent double submission
+            if (this.isSubmitting) {
                 return;
             }
             
-            // Convert date objects to ISO strings for API submission
-            const submitData = {
-                ...this.formData,
-                moveInDate: this.formatDate(this.formData.moveInDate),
-                availability1: {
-                    ...this.formData.availability1,
-                    date: this.formatDate(this.formData.availability1.date)
-                },
-                availability2: {
-                    ...this.formData.availability2,
-                    date: this.formatDate(this.formData.availability2.date)
-                },
-                availability3: {
-                    ...this.formData.availability3,
-                    date: this.formatDate(this.formData.availability3.date)
+            try {
+                this.isSubmitting = true;
+                this.validationErrors = {};
+                
+                // Prepare availability data as JSON object
+                const availability = {
+                    availability1: {
+                        date: this.formatDate(this.formData.availability1.date),
+                        from: this.formData.availability1.from,
+                        to: this.formData.availability1.to
+                    },
+                    availability2: {
+                        date: this.formatDate(this.formData.availability2.date),
+                        from: this.formData.availability2.from,
+                        to: this.formData.availability2.to
+                    },
+                    availability3: {
+                        date: this.formatDate(this.formData.availability3.date),
+                        from: this.formData.availability3.from,
+                        to: this.formData.availability3.to
+                    }
+                };
+                
+                // Prepare data for API
+                const submitData = {
+                    first_name: this.formData.firstName,
+                    last_name: this.formData.lastName,
+                    phone_number: this.formData.phoneNumber,
+                    email: this.formData.email,
+                    move_in_date: this.formatDate(this.formData.moveInDate),
+                    preferred_communication: this.formData.preferredCommunication,
+                    availability: availability,
+                    message: this.formData.message,
+                };
+
+                // Make API call
+                const response = await fetch('/api/schedule-visits', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    },
+                    body: JSON.stringify(submitData),
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    // Handle validation errors
+                    if (response.status === 422 && result.errors) {
+                        this.isSubmitting = false;
+                        // Convert Laravel validation errors format to flat object
+                        const errors = {};
+                        Object.keys(result.errors).forEach(key => {
+                            errors[key] = Array.isArray(result.errors[key]) ? result.errors[key][0] : result.errors[key];
+                        });
+                        this.validationErrors = errors;
+                        // Scroll to first error
+                        const firstErrorField = Object.keys(errors)[0];
+                        const errorElement = document.querySelector(`[name="${firstErrorField}"]`) || 
+                                            document.querySelector(`input[placeholder*="${firstErrorField}"]`) ||
+                                            document.querySelector(`textarea[placeholder*="${firstErrorField}"]`);
+                        if (errorElement) {
+                            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            errorElement.focus();
+                        }
+                        return;
+                    }
+                    throw new Error(result.message || 'Failed to save schedule visit');
                 }
-            };
-            
-            // Here you would typically send the form data to your backend API
-            
-            // For now, just show success message
-            this.isSubmitted = true;
-            
-            // In a real application, you would do something like:
-            // axios.post('/api/schedule-visit', submitData)
-            //     .then(response => {
-            //         this.isSubmitted = true;
-            //     })
-            //     .catch(error => {
-            //         console.error('Error submitting form:', error);
-            //     });
+
+                // Success
+                this.validationErrors = {};
+                
+                // Add confetti effect
+                const duration = 3000;
+                const end = Date.now() + duration;
+
+                const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#FF1493', '#9370DB', '#FF69B4'];
+                
+                // Continuous confetti from sides
+                (function frame() {
+                    // Confetti from left side
+                    confetti({
+                        particleCount: 2,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: colors
+                    });
+                    // Confetti from right side
+                    confetti({
+                        particleCount: 2,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: colors
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+                
+                this.isSubmitted = true;
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                alert('An error occurred while saving: ' + error.message);
+            } finally {
+                this.isSubmitting = false;
+            }
         }
     }
 };
@@ -453,6 +584,24 @@ export default {
 
 .p-datepicker-input {
     width: 100% !important;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
 }
 </style>
 

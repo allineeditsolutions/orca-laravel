@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\PropertyDetailsController;
+use App\Http\Controllers\ScheduleVisitController;
+use App\Http\Controllers\NewbizRequestController;
 
 // Example API routes
 Route::get('/test', function () {
@@ -95,4 +97,10 @@ Route::post('/complycube/create-verification-token', function (Illuminate\Http\R
 
 // Property Details Routes
 Route::post('/property-details', [PropertyDetailsController::class, 'store']);
+
+// Schedule Visit Routes
+Route::post('/schedule-visits', [ScheduleVisitController::class, 'store']);
+
+// Newbiz Request Routes
+Route::post('/newbiz-requests', [NewbizRequestController::class, 'store']);
 

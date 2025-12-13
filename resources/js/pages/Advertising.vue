@@ -99,35 +99,35 @@ import UtilitiesInclusionsRestrictionsSection from '@/components/advertising/Uti
 import OtherDetailsSection from '@/components/advertising/OtherDetailsSection.vue';
 import ReviewSection from '@/components/advertising/ReviewSection.vue';
 
-const currentStep = ref(4);
+const currentStep = ref(1);
 const isSubmitted = ref(false);
 const isSubmitting = ref(false);
 const validationErrors = ref({});
 
 const formData = reactive({
     // Owner Information
-    businessLegalName: 'ABC Property Holdings Inc.',
-    ownerEmail: 'john.smith@example.com',
-    phone: '(604) 555-0123',
-    firstName: 'John',
-    lastName: 'Smith',
-    dateOfBirth: '1985-05-15',
-    residentStatus: 'Resident',
+    businessLegalName: '',
+    ownerEmail: '',
+    phone: '',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    residentStatus: '',
     coOwners: [],
     
     // Point of Contact
-    pointOfContact: 'Same as Main Owner',
+    pointOfContact: '',
     otherPointOfContact: '',
     pointOfContactFirstName: '',
     pointOfContactEmail: '',
     pointOfContactPhone: '',
     
     // Mailing Information
-    unitSuite: 'Suite 201',
-    streetAddress: '123 Main Street',
-    city: 'Vancouver',
-    province: 'British Columbia',
-    postalCode: 'V6B 1A1',
+    unitSuite: '',
+    streetAddress: '',
+    city: '',
+    province: '',
+    postalCode: '',
 
     // Step 2 - Rental Property Information & Features
     rental: {

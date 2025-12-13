@@ -9,7 +9,7 @@
                     <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm3 1h6v4H7V5zm6 6H7v2h6v-2z" clip-rule="evenodd" />
                     </svg>
-                    <h3 class="text-lg font-semibold text-black">Other Details</h3>
+                    <h3 class="text-lg font-semibold text-black">{{ sectionTitle }}</h3>
                 </div>
                 <button
                     type="button"
@@ -28,25 +28,486 @@
             </div>
 
             <div v-if="isOpen" class="p-2 lg:p-5 space-y-5 sm:space-y-3">
-                <!-- Other Details header note -->
-                <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
-                    <div class="space-y-1">
-                        <p class="text-gray-800 font-medium">OTHER DETAILS</p>
-                        <p class="text-sm text-red-400">If rental unit is Condo kindly provide following data. If property is a house, please proceed to next page.</p>
+                <!-- HOUSE SECTION -->
+                <template v-if="propertyType === 'House'">
+                    <!-- HOME INCLUSIONS -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <div class="space-y-1">
+                            <p class="text-gray-800 font-medium">HOME INCLUSIONS <span class="text-red-500">*</span></p>
+                            <p class="text-sm text-red-500">If the rental unit is a House. Kindly tick on boxes that applies.</p>
+                        </div>
+                        <div class="r-mt-2">
+                            <label class="block text-gray-800 mb-2">Is It okay to put a sign up front? <span class="text-xs text-gray-500">(highly recommend as it increases inquiries up to 20%)</span></label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                                <label
+                                    v-for="label in ['Yes', 'No']"
+                                    :key="label"
+                                    class="flex items-center gap-3 text-gray-800 cursor-pointer"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="signUpFront"
+                                        class="w-5 h-5 accent-black cursor-pointer"
+                                        :checked="d.other?.signUpFront === label"
+                                        @change="handleDataChange('other.signUpFront', label)"
+                                    />
+                                    <span>{{ label }}</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Strata company -->
-                    <div class="r-mt-2">
-                        <label class="block mb-2 text-gray-800">Name of Strata Property Management Company.</label>
+                    <!-- ONGOING MAINTENANCE -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <label class="block text-gray-800 font-medium">ONGOING MAINTENANCE</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <div
+                                v-for="label in maintenanceOptions"
+                                :key="label"
+                                class="flex items-center gap-3"
+                            >
+                                <label class="flex items-center gap-2 text-gray-800 min-w-fit cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        class="w-5 h-5 accent-black cursor-pointer focus:ring-black/10"
+                                        :checked="(d.other?.maintenance || []).includes(label)"
+                                        @change="handleMaintenanceChange(label, $event.target.checked)"
+                                    />
+                                    <span class="whitespace-nowrap">{{ label }}</span>
+                                </label>
+                                <div v-if="(d.other?.maintenance || []).includes(label)" class="relative flex-1">
+                                    <select
+                                        :value="d.other?.maintenanceFrequencies?.[label] || ''"
+                                        @change="handleMaintenanceFrequencyChange(label, $event.target.value)"
+                                        :class="['w-full p-2 pr-8 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`other.maintenanceFrequencies.${label}`] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                    >
+                                        <option value="">-- Select --</option>
+                                        <option v-if="label === 'Heating system' || label === 'Chimney'" value="Annual maintenance is preferred">Annual maintenance is preferred</option>
+                                        <option v-if="label === 'Heating system' || label === 'Chimney'" value="No, I will inform Orca Realty if I want it serviced in the future">No, I will inform Orca Realty if I want it serviced in the future</option>
+                                        <option v-if="label === 'Garden Maintenance Seasonal'" value="Monthly gardening, Spring">Monthly gardening, Spring</option>
+                                        <option v-if="label === 'Garden Maintenance Seasonal'" value="Autumn Only, No gardening included.">Autumn Only, No gardening included.</option>
+                                        <option v-if="label === 'Lawn Maintenance'" value="Full mowing services included Lawnmower included">Full mowing services included Lawnmower included</option>
+                                        <option v-if="label === 'Lawn Maintenance'" value="Nothing included">Nothing included</option>
+                                        <option v-if="label !== 'Heating system' && label !== 'Chimney' && label !== 'Garden Maintenance Seasonal' && label !== 'Lawn Maintenance'" value="Once a year">Once a year</option>
+                                        <option v-if="label !== 'Heating system' && label !== 'Chimney' && label !== 'Garden Maintenance Seasonal' && label !== 'Lawn Maintenance'" value="Twice a year">Twice a year</option>
+                                        <option v-if="label !== 'Heating system' && label !== 'Chimney' && label !== 'Garden Maintenance Seasonal' && label !== 'Lawn Maintenance'" value="NA">NA</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                    <p v-if="validationErrors[`other.maintenanceFrequencies.${label}`]" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors[`other.maintenanceFrequencies.${label}`]) ? validationErrors[`other.maintenanceFrequencies.${label}`][0] : validationErrors[`other.maintenanceFrequencies.${label}`] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inground Sprinklers -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <label class="block mb-2 text-gray-800">Inground Sprinklers that need servicing?</label>
+                        <div class="relative w-full sm:w-80">
+                            <select
+                                :value="d.other?.sprinklersService || ''"
+                                @change="handleDataChange('other.sprinklersService', $event.target.value)"
+                                :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.sprinklersService'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                            >
+                                <option value="">-- Select --</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                            <p v-if="validationErrors['other.sprinklersService']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.sprinklersService']) ? validationErrors['other.sprinklersService'][0] : validationErrors['other.sprinklersService'] }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Has self-contained suite -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <label class="block mb-2 text-gray-800">Has self-contained suite?</label>
+                        <div class="relative w-full sm:w-80">
+                            <select
+                                :value="d.other?.hasSelfContainedSuite || ''"
+                                @change="handleDataChange('other.hasSelfContainedSuite', $event.target.value)"
+                                :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.hasSelfContainedSuite'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                            >
+                                <option value="">-- Select --</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                            <p v-if="validationErrors['other.hasSelfContainedSuite']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.hasSelfContainedSuite']) ? validationErrors['other.hasSelfContainedSuite'][0] : validationErrors['other.hasSelfContainedSuite'] }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Fuse Box and Garbage -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <!-- Fuse Box -->
+                        <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                            <label class="block mb-2 text-gray-800 font-medium">Fuse Box</label>
+                            <p class="text-sm text-red-500 mb-2">Please specify the fuse box location</p>
+                            <input
+                                type="text"
+                                :value="d.other?.fuseBox || ''"
+                                @input="handleDataChange('other.fuseBox', $event.target.value)"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.fuseBox'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                            />
+                            <p v-if="validationErrors['other.fuseBox']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.fuseBox']) ? validationErrors['other.fuseBox'][0] : validationErrors['other.fuseBox'] }}</p>
+                        </div>
+
+                        <!-- Garbage: Location, Disposal & Restrictions -->
+                        <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                            <label class="block mb-2 text-gray-800 font-medium">Garbage: Location, Disposal & Restrictions</label>
+                            <p class="text-sm text-red-500 mb-2">For Houses, please specify days / schedule for pick up</p>
+                            <input
+                                type="text"
+                                :value="d.other?.garbageInfo || ''"
+                                @input="handleDataChange('other.garbageInfo', $event.target.value)"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.garbageInfo'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                            />
+                            <p v-if="validationErrors['other.garbageInfo']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.garbageInfo']) ? validationErrors['other.garbageInfo'][0] : validationErrors['other.garbageInfo'] }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Main Waterline -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <label class="block mb-2 text-gray-800 font-medium">Main Waterline</label>
+                        <p class="text-sm text-red-500 mb-2">Please specify the waterline location</p>
                         <input
                             type="text"
-                            :value="d.other?.strataCompany || ''"
-                            @input="handleDataChange('other.strataCompany', $event.target.value)"
-                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataCompany'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                            :value="d.other?.mainWaterline || ''"
+                            @input="handleDataChange('other.mainWaterline', $event.target.value)"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.mainWaterline'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
                         />
-                        <p v-if="validationErrors['other.strataCompany']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataCompany']) ? validationErrors['other.strataCompany'][0] : validationErrors['other.strataCompany'] }}</p>
+                        <p v-if="validationErrors['other.mainWaterline']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.mainWaterline']) ? validationErrors['other.mainWaterline'][0] : validationErrors['other.mainWaterline'] }}</p>
                     </div>
-                </div>
+                </template>
+
+                <!-- APARTMENT/CONDO SECTION -->
+                <template v-else-if="propertyType === 'Apartment/Condo'">
+                    <!-- CONDO DETAILS -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <div class="space-y-1">
+                            <p class="text-gray-800 font-medium">CONDO DETAILS <span class="text-red-500">*</span></p>
+                            <p class="text-sm text-red-500">If rental unit is Condo kindly provide following data. If property is a house, please proceed to next page.</p>
+                        </div>
+                        <div class="r-mt-2">
+                            <label class="block mb-2 text-gray-800">Name of Strata Property Management Company.</label>
+                            <input
+                                type="text"
+                                :value="d.other?.strataCompany || ''"
+                                @input="handleDataChange('other.strataCompany', $event.target.value)"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataCompany'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                            />
+                            <p v-if="validationErrors['other.strataCompany']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataCompany']) ? validationErrors['other.strataCompany'][0] : validationErrors['other.strataCompany'] }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <p class="text-sm text-red-500">Kindly provide name and means of contact (email and/or number, if unable to provide please skip to next section)</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 r-mt-2">
+                            <div>
+                                <label class="block mb-2 text-gray-800">Strata Manager Name</label>
+                                <input
+                                    type="text"
+                                    :value="d.other?.strataManagerName || ''"
+                                    @input="handleDataChange('other.strataManagerName', $event.target.value)"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataManagerName'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.strataManagerName']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataManagerName']) ? validationErrors['other.strataManagerName'][0] : validationErrors['other.strataManagerName'] }}</p>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-gray-800">Building Manager Name</label>
+                                <input
+                                    type="text"
+                                    :value="d.other?.buildingManagerName || ''"
+                                    @input="handleDataChange('other.buildingManagerName', $event.target.value)"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.buildingManagerName'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.buildingManagerName']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.buildingManagerName']) ? validationErrors['other.buildingManagerName'][0] : validationErrors['other.buildingManagerName'] }}</p>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-gray-800">Strata Phone</label>
+                                <input
+                                    type="tel"
+                                    :value="d.other?.strataPhone || ''"
+                                    @input="handleDataChange('other.strataPhone', $event.target.value)"
+                                    placeholder="(000) 000-0000"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataPhone'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.strataPhone']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataPhone']) ? validationErrors['other.strataPhone'][0] : validationErrors['other.strataPhone'] }}</p>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-gray-800">Strata Email Address</label>
+                                <input
+                                    type="email"
+                                    :value="d.other?.strataEmail || ''"
+                                    @input="handleDataChange('other.strataEmail', $event.target.value)"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataEmail'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.strataEmail']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataEmail']) ? validationErrors['other.strataEmail'][0] : validationErrors['other.strataEmail'] }}</p>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-gray-800">Phone</label>
+                                <input
+                                    type="tel"
+                                    :value="d.other?.buildingManagerPhone || ''"
+                                    @input="handleDataChange('other.buildingManagerPhone', $event.target.value)"
+                                    placeholder="(000) 000-0000"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.buildingManagerPhone'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.buildingManagerPhone']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.buildingManagerPhone']) ? validationErrors['other.buildingManagerPhone'][0] : validationErrors['other.buildingManagerPhone'] }}</p>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-gray-800">Email Address</label>
+                                <input
+                                    type="email"
+                                    :value="d.other?.buildingManagerEmail || ''"
+                                    @input="handleDataChange('other.buildingManagerEmail', $event.target.value)"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.buildingManagerEmail'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.buildingManagerEmail']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.buildingManagerEmail']) ? validationErrors['other.buildingManagerEmail'][0] : validationErrors['other.buildingManagerEmail'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Move in fees -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <label class="block mb-1 text-gray-800">Move In Fees</label>
+                        <p class="text-sm text-red-500 r-mb-1">Kindly provide amount of move in fees.</p>
+                        <div class="relative w-full sm:w-80">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium text-base sm:text-lg lg:text-xl">$</span>
+                            <input
+                                type="text"
+                                :value="formatMoveInFees(d.other?.moveInFees)"
+                                @input="handleMoveInFeesChange($event.target.value)"
+                                placeholder="0.00"
+                                :class="['w-full pl-8 pr-4 p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.moveInFees'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                            />
+                            <p v-if="validationErrors['other.moveInFees']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.moveInFees']) ? validationErrors['other.moveInFees'][0] : validationErrors['other.moveInFees'] }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Utilities/Other Items Available -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <label class="block text-gray-800 font-medium">Kindly tick utilities/other items available in the rental property.</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <label
+                                v-for="label in amenitiesOptions"
+                                :key="label"
+                                class="flex items-center gap-3 text-gray-800 cursor-pointer"
+                            >
+                                <input
+                                    type="checkbox"
+                                    class="w-5 h-5 accent-black cursor-pointer focus:ring-black/10"
+                                    :checked="(d.other?.amenities || []).includes(label)"
+                                    @change="handleAmenityChange(label, $event.target.checked)"
+                                />
+                                <span>{{ label }}</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Building Amenities Information -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <label class="block mb-2 text-gray-800 font-medium">Any information that you could share with your future Tenants about the location of the building amenities?</label>
+                        <textarea
+                            :value="d.other?.amenitiesNotes || ''"
+                            @input="handleDataChange('other.amenitiesNotes', $event.target.value)"
+                            rows="5"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl resize-y', validationErrors['other.amenitiesNotes'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                        ></textarea>
+                        <p v-if="validationErrors['other.amenitiesNotes']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.amenitiesNotes']) ? validationErrors['other.amenitiesNotes'][0] : validationErrors['other.amenitiesNotes'] }}</p>
+                    </div>
+                </template>
+
+                <!-- TOWNHOUSE SECTION -->
+                <template v-else-if="propertyType === 'Townhouse'">
+                    <!-- HOME INCLUSIONS -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <div class="space-y-1">
+                            <p class="text-gray-800 font-medium">HOME INCLUSIONS <span class="text-red-500">*</span></p>
+                            <p class="text-sm text-red-500">If the rental unit is a House. Kindly tick on boxes that applies.</p>
+                        </div>
+                        <div class="r-mt-2">
+                            <label class="block text-gray-800 mb-2">Is It okay to put a sign up front? <span class="text-xs text-gray-500">(highly recommend as it increases inquiries up to 20%)</span></label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                                <label
+                                    v-for="label in ['Yes', 'No']"
+                                    :key="label"
+                                    class="flex items-center gap-3 text-gray-800 cursor-pointer"
+                                >
+                                    <input
+                                        type="radio"
+                                        name="signUpFront"
+                                        class="w-5 h-5 accent-black cursor-pointer"
+                                        :checked="d.other?.signUpFront === label"
+                                        @change="handleDataChange('other.signUpFront', label)"
+                                    />
+                                    <span>{{ label }}</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="r-mt-2">
+                            <label class="block mb-2 text-gray-800">Name of Strata Property Management Company.</label>
+                            <input
+                                type="text"
+                                :value="d.other?.strataCompany || ''"
+                                @input="handleDataChange('other.strataCompany', $event.target.value)"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataCompany'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                            />
+                            <p v-if="validationErrors['other.strataCompany']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataCompany']) ? validationErrors['other.strataCompany'][0] : validationErrors['other.strataCompany'] }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <p class="text-sm text-red-500">Kindly provide name and means of contact (email and/or number, if unable to provide please skip to next section)</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 r-mt-2">
+                            <div>
+                                <label class="block mb-2 text-gray-800">Strata Manager Name</label>
+                                <input
+                                    type="text"
+                                    :value="d.other?.strataManagerName || ''"
+                                    @input="handleDataChange('other.strataManagerName', $event.target.value)"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataManagerName'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.strataManagerName']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataManagerName']) ? validationErrors['other.strataManagerName'][0] : validationErrors['other.strataManagerName'] }}</p>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-gray-800">Building Manager Name</label>
+                                <input
+                                    type="text"
+                                    :value="d.other?.buildingManagerName || ''"
+                                    @input="handleDataChange('other.buildingManagerName', $event.target.value)"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.buildingManagerName'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.buildingManagerName']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.buildingManagerName']) ? validationErrors['other.buildingManagerName'][0] : validationErrors['other.buildingManagerName'] }}</p>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-gray-800">Strata Phone</label>
+                                <input
+                                    type="tel"
+                                    :value="d.other?.strataPhone || ''"
+                                    @input="handleDataChange('other.strataPhone', $event.target.value)"
+                                    placeholder="(000) 000-0000"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataPhone'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.strataPhone']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataPhone']) ? validationErrors['other.strataPhone'][0] : validationErrors['other.strataPhone'] }}</p>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-gray-800">Strata Email Address</label>
+                                <input
+                                    type="email"
+                                    :value="d.other?.strataEmail || ''"
+                                    @input="handleDataChange('other.strataEmail', $event.target.value)"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataEmail'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.strataEmail']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataEmail']) ? validationErrors['other.strataEmail'][0] : validationErrors['other.strataEmail'] }}</p>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-gray-800">Phone</label>
+                                <input
+                                    type="tel"
+                                    :value="d.other?.buildingManagerPhone || ''"
+                                    @input="handleDataChange('other.buildingManagerPhone', $event.target.value)"
+                                    placeholder="(000) 000-0000"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.buildingManagerPhone'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.buildingManagerPhone']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.buildingManagerPhone']) ? validationErrors['other.buildingManagerPhone'][0] : validationErrors['other.buildingManagerPhone'] }}</p>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-gray-800">Email Address</label>
+                                <input
+                                    type="email"
+                                    :value="d.other?.buildingManagerEmail || ''"
+                                    @input="handleDataChange('other.buildingManagerEmail', $event.target.value)"
+                                    :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.buildingManagerEmail'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                                />
+                                <p v-if="validationErrors['other.buildingManagerEmail']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.buildingManagerEmail']) ? validationErrors['other.buildingManagerEmail'][0] : validationErrors['other.buildingManagerEmail'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Move in fees -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <label class="block mb-1 text-gray-800">Move In Fees</label>
+                        <p class="text-sm text-red-500 r-mb-1">Kindly provide amount of move in fees.</p>
+                        <div class="relative w-full sm:w-80">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 font-medium text-base sm:text-lg lg:text-xl">$</span>
+                            <input
+                                type="text"
+                                :value="formatMoveInFees(d.other?.moveInFees)"
+                                @input="handleMoveInFeesChange($event.target.value)"
+                                placeholder="0.00"
+                                :class="['w-full pl-8 pr-4 p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.moveInFees'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                            />
+                            <p v-if="validationErrors['other.moveInFees']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.moveInFees']) ? validationErrors['other.moveInFees'][0] : validationErrors['other.moveInFees'] }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Utilities/Other Items Available -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <label class="block text-gray-800 font-medium">Kindly tick utilities/other items available in the rental property.</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <label
+                                v-for="label in amenitiesOptions"
+                                :key="label"
+                                class="flex items-center gap-3 text-gray-800 cursor-pointer"
+                            >
+                                <input
+                                    type="checkbox"
+                                    class="w-5 h-5 accent-black cursor-pointer focus:ring-black/10"
+                                    :checked="(d.other?.amenities || []).includes(label)"
+                                    @change="handleAmenityChange(label, $event.target.checked)"
+                                />
+                                <span>{{ label }}</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Building Amenities Information -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <label class="block mb-2 text-gray-800 font-medium">Any information that you could share with your future Tenants about the location of the building amenities?</label>
+                        <textarea
+                            :value="d.other?.amenitiesNotes || ''"
+                            @input="handleDataChange('other.amenitiesNotes', $event.target.value)"
+                            rows="5"
+                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl resize-y', validationErrors['other.amenitiesNotes'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                        ></textarea>
+                        <p v-if="validationErrors['other.amenitiesNotes']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.amenitiesNotes']) ? validationErrors['other.amenitiesNotes'][0] : validationErrors['other.amenitiesNotes'] }}</p>
+                    </div>
+                </template>
+
+                <!-- OTHER / DEFAULT SECTION (shows all fields) -->
+                <template v-else>
+                    <!-- Other Details header note -->
+                    <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+                        <div class="space-y-1">
+                            <p class="text-gray-800 font-medium">OTHER DETAILS</p>
+                            <p class="text-sm text-red-400">If rental unit is Condo kindly provide following data. If property is a house, please proceed to next page.</p>
+                        </div>
+
+                        <!-- Strata company -->
+                        <div class="r-mt-2">
+                            <label class="block mb-2 text-gray-800">Name of Strata Property Management Company.</label>
+                            <input
+                                type="text"
+                                :value="d.other?.strataCompany || ''"
+                                @input="handleDataChange('other.strataCompany', $event.target.value)"
+                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['other.strataCompany'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                            />
+                            <p v-if="validationErrors['other.strataCompany']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.strataCompany']) ? validationErrors['other.strataCompany'][0] : validationErrors['other.strataCompany'] }}</p>
+                        </div>
+                    </div>
 
                 <!-- Contacts -->
                 <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
@@ -145,7 +606,7 @@
                         >
                             <input
                                 type="checkbox"
-                                class="w-5 h-5 accent-black cursor-pointer"
+                                class="w-5 h-5 accent-black cursor-pointer focus:ring-black/10"
                                 :checked="(d.other?.amenities || []).includes(label)"
                                 @change="handleAmenityChange(label, $event.target.checked)"
                             />
@@ -198,7 +659,7 @@
                             <label class="flex items-center gap-2 text-gray-800 min-w-fit cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    class="w-5 h-5 accent-black cursor-pointer"
+                                    class="w-5 h-5 accent-black cursor-pointer focus:ring-black/10"
                                     :checked="(d.other?.maintenance || []).includes(label)"
                                     @change="handleMaintenanceChange(label, $event.target.checked)"
                                 />
@@ -483,6 +944,7 @@
                         <p v-if="validationErrors['other.amenitiesNotes']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['other.amenitiesNotes']) ? validationErrors['other.amenitiesNotes'][0] : validationErrors['other.amenitiesNotes'] }}</p>
                     </div>
                 </div>
+                </template>
             </div>
         </div>
 
@@ -557,6 +1019,23 @@ const maintenanceOptions = [
 ];
 
 const d = computed(() => props.formData || {});
+
+// Get property type from form data
+const propertyType = computed(() => {
+    return d.value.utilities?.propertyType || '';
+});
+
+// Dynamic section title based on property type
+const sectionTitle = computed(() => {
+    if (propertyType.value === 'House') {
+        return 'House Details';
+    } else if (propertyType.value === 'Apartment/Condo') {
+        return 'Apartment/Condo Details';
+    } else if (propertyType.value === 'Townhouse') {
+        return 'Townhouse Details';
+    }
+    return 'Other Details';
+});
 
 // Handle suite tenants array
 const suiteTenants = computed(() => {

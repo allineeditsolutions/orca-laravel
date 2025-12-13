@@ -30,7 +30,7 @@
                 <!-- Address Row 1 -->
                 <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm ">
                     <label class="flex items-center gap-3 text-base sm:text-lg lg:text-md text-gray-800">
-                        <input type="checkbox" class="w-5 h-5" :checked="sameAsMailing" @change="sameAsMailing = $event.target.checked" />
+                        <input type="checkbox" class="w-5 h-5 accent-black cursor-pointer focus:ring-black/10" :checked="sameAsMailing" @change="sameAsMailing = $event.target.checked" />
                         <span>Same as Mailing Address</span>
                     </label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -193,7 +193,7 @@
                                     :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 focus:border-black transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`rental.${featureKeyMap[label]}`] ? 'border-red-500' : 'border-gray-200 focus:ring-black/10']"
                                 >
                                     <option value="">Select</option>
-                                    <option v-for="n in (['Den','Balcony/Patio','Storage'].includes(label) ? ['Yes','No'] : ['0','1','2','3','4','5','6'])" :key="n" :value="n">{{ n }}</option>
+                                    <option v-for="n in (['Den','Balcony/Patio','Storage'].includes(label) ? ['Yes','No'] : ['0','1','2','3','4','5','6','7','8','9','10+'])" :key="n" :value="n">{{ n }}</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-4 sm:pr-6 md:pr-8 lg:pr-17 xl:pr-3 pointer-events-none">
                                     <svg class="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -216,7 +216,7 @@
                         >
                             <input
                                 type="checkbox"
-                                class="w-5 h-5"
+                                class="w-5 h-5 accent-black cursor-pointer focus:ring-black/10"
                                 :checked="(d.fireplaceTypes || []).includes(label)"
                                 @change="handleFireplaceChange(label, $event.target.checked)"
                             />
@@ -243,7 +243,7 @@
                             <label class="flex items-center gap-3 text-gray-800">
                                 <input
                                     type="checkbox"
-                                    class="w-5 h-5"
+                                    class="w-5 h-5 accent-black cursor-pointer focus:ring-black/10"
                                     :checked="isParkingChecked(label)"
                                     @change="handleParkingChange(label, $event.target.checked)"
                                 />
@@ -308,7 +308,7 @@
                         >
                             <input
                                 type="checkbox"
-                                class="w-5 h-5"
+                                class="w-5 h-5 accent-black cursor-pointer focus:ring-black/10"
                                 :checked="(d.heating || []).includes(label)"
                                 @change="handleHeatingChange(label, $event.target.checked)"
                             />
@@ -361,7 +361,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 const props = defineProps({
     onBack: Function,
@@ -380,6 +380,35 @@ const emit = defineEmits(['data-change']);
 
 const isOpen = ref(true);
 const sameAsMailing = ref(false);
+
+// Watch for checkbox changes and copy mailing address to rental address
+watch(sameAsMailing, (checked) => {
+    if (checked) {
+        // Copy mailing address fields to rental address fields
+        if (props.formData.unitSuite) {
+            emit('data-change', 'rental.unitSuite', props.formData.unitSuite);
+        }
+        if (props.formData.streetAddress) {
+            emit('data-change', 'rental.streetAddress', props.formData.streetAddress);
+        }
+        if (props.formData.city) {
+            emit('data-change', 'rental.city', props.formData.city);
+        }
+        if (props.formData.province) {
+            emit('data-change', 'rental.province', props.formData.province);
+        }
+        if (props.formData.postalCode) {
+            emit('data-change', 'rental.postalCode', props.formData.postalCode);
+        }
+    } else {
+        // Clear rental address fields when unchecked
+        emit('data-change', 'rental.unitSuite', '');
+        emit('data-change', 'rental.streetAddress', '');
+        emit('data-change', 'rental.city', '');
+        emit('data-change', 'rental.province', '');
+        emit('data-change', 'rental.postalCode', '');
+    }
+});
 
 const provinces = [
     'Alberta',
@@ -413,8 +442,28 @@ const handleDataChange = (path, value) => {
 
 const handleFireplaceChange = (label, checked) => {
     const prev = (d.value.fireplaceTypes || []);
-    const next = checked ? [...prev, label] : prev.filter(x => x !== label);
-    emit('data-change', 'rental.fireplaceTypes', next);
+    const notAvailableLabel = 'Not Available For This Property';
+    
+    if (label === notAvailableLabel) {
+        // If "Not Available For This Property" is checked, uncheck all others
+        if (checked) {
+            emit('data-change', 'rental.fireplaceTypes', [notAvailableLabel]);
+        } else {
+            // If unchecked, just remove it
+            emit('data-change', 'rental.fireplaceTypes', []);
+        }
+    } else {
+        // If any other option is checked, uncheck "Not Available For This Property"
+        if (checked) {
+            const next = prev.filter(x => x !== notAvailableLabel);
+            next.push(label);
+            emit('data-change', 'rental.fireplaceTypes', next);
+        } else {
+            // If unchecked, just remove it
+            const next = prev.filter(x => x !== label);
+            emit('data-change', 'rental.fireplaceTypes', next);
+        }
+    }
 };
 
 const isParkingChecked = (label) => {

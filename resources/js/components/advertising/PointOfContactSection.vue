@@ -38,6 +38,30 @@
                     />
                     <span class="text-gray-800 font-medium">Same as Main Owner</span>
                 </label>
+                <template v-if="hasCoOwners">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input
+                            type="radio"
+                            name="pointOfContact"
+                            value="Same as Co-Owner"
+                            :checked="formData.pointOfContact === 'Same as Co-Owner'"
+                            @change="handleChange('pointOfContact', 'Same as Co-Owner'); handleChange('otherPointOfContact', '')"
+                            class="w-4 h-4 text-black focus:ring-black/10"
+                        />
+                        <span class="text-gray-800 font-medium">Same as Co-Owner</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input
+                            type="radio"
+                            name="pointOfContact"
+                            value="Both"
+                            :checked="formData.pointOfContact === 'Both'"
+                            @change="handleChange('pointOfContact', 'Both Main & Co-Owner'); handleChange('otherPointOfContact', '')"
+                            class="w-4 h-4 text-black focus:ring-black/10"
+                        />
+                        <span class="text-gray-800 font-medium">Both Main & Co-Owner</span>
+                    </label>
+                </template>
                 <label class="flex items-center gap-3 cursor-pointer">
                     <input
                         type="radio"
@@ -101,7 +125,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
     formData: {
@@ -117,6 +141,10 @@ const props = defineProps({
 const emit = defineEmits(['data-change']);
 
 const isOpen = ref(true);
+
+const hasCoOwners = computed(() => {
+    return props.formData.coOwners && Array.isArray(props.formData.coOwners) && props.formData.coOwners.length > 0;
+});
 
 const formatPhoneNumber = (value) => {
     // Remove all non-digit characters

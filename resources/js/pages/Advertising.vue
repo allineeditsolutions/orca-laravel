@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import StepIndicator from '@/components/advertising/StepIndicator.vue';
 import OwnerInformationSection from '@/components/advertising/OwnerInformationSection.vue';
 import PointOfContactSection from '@/components/advertising/PointOfContactSection.vue';
@@ -99,43 +99,35 @@ import UtilitiesInclusionsRestrictionsSection from '@/components/advertising/Uti
 import OtherDetailsSection from '@/components/advertising/OtherDetailsSection.vue';
 import ReviewSection from '@/components/advertising/ReviewSection.vue';
 
-const currentStep = ref(1);
+const currentStep = ref(4);
 const isSubmitted = ref(false);
 const isSubmitting = ref(false);
 const validationErrors = ref({});
-const steps = [
-    { number: 1, title: 'Homeowner Detail' },
-    { number: 2, title: 'Rental Property Information & Features' },
-    { number: 3, title: 'Occupancy and Property Availability' },
-    { number: 4, title: 'Utilities, Inclusions, Restrictions' },
-    { number: 5, title: 'Other Details' },
-    { number: 6, title: 'Review' },
-];
 
 const formData = reactive({
     // Owner Information
-    businessLegalName: '',
-    ownerEmail: '',
-    phone: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    residentStatus: '',
+    businessLegalName: 'ABC Property Holdings Inc.',
+    ownerEmail: 'john.smith@example.com',
+    phone: '(604) 555-0123',
+    firstName: 'John',
+    lastName: 'Smith',
+    dateOfBirth: '1985-05-15',
+    residentStatus: 'Resident',
     coOwners: [],
     
     // Point of Contact
-    pointOfContact: '',
+    pointOfContact: 'Same as Main Owner',
     otherPointOfContact: '',
     pointOfContactFirstName: '',
     pointOfContactEmail: '',
     pointOfContactPhone: '',
     
     // Mailing Information
-    unitSuite: '',
-    streetAddress: '',
-    city: '',
-    province: '',
-    postalCode: '',
+    unitSuite: 'Suite 201',
+    streetAddress: '123 Main Street',
+    city: 'Vancouver',
+    province: 'British Columbia',
+    postalCode: 'V6B 1A1',
 
     // Step 2 - Rental Property Information & Features
     rental: {
@@ -216,10 +208,36 @@ const formData = reactive({
         amenitiesFloor: '',
         bikeStorageLocation: '',
         garbageInfo: '',
+        mainWaterline: '',
         amenitiesNotes: '',
         virtualTour: '',
         listingUrl: '',
     },
+});
+
+// Computed property for step 5 title based on property type
+const getStep5Title = (propertyType) => {
+    if (propertyType === 'House') {
+        return 'House Details';
+    } else if (propertyType === 'Apartment/Condo') {
+        return 'Apartment/Condo Details';
+    } else if (propertyType === 'Townhouse') {
+        return 'Townhouse Details';
+    }
+    return 'Other Details';
+};
+
+// Computed steps array that updates based on property type
+const steps = computed(() => {
+    const propertyType = formData.utilities?.propertyType || '';
+    return [
+        { number: 1, title: 'Homeowner Detail' },
+        { number: 2, title: 'Rental Property Information & Features' },
+        { number: 3, title: 'Occupancy and Property Availability' },
+        { number: 4, title: 'Utilities, Inclusions, Restrictions' },
+        { number: 5, title: getStep5Title(propertyType) },
+        { number: 6, title: 'Review' },
+    ];
 });
 
 const handleDataChange = (path, value) => {
@@ -570,7 +588,7 @@ const handleNext = () => {
     // Clear validation errors when moving to next step
     validationErrors.value = {};
     
-    if (currentStep.value < steps.length) {
+    if (currentStep.value < steps.value.length) {
         currentStep.value++;
     }
 };

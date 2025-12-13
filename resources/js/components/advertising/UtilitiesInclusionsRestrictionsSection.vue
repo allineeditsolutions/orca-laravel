@@ -222,7 +222,7 @@
                         >
                             <input
                                 type="checkbox"
-                                class="w-5 h-5 accent-black cursor-pointer"
+                                class="w-5 h-5 accent-black cursor-pointer focus:ring-black/10"
                                 :checked="(d.utilities?.inclusions || []).includes(label)"
                                 @change="handleInclusionChange(label, $event.target.checked)"
                             />

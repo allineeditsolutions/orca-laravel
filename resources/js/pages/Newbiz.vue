@@ -272,6 +272,8 @@
                                         <input
                                             type="tel"
                                             v-model="formData.phoneNumber"
+                                            @input="formatPhoneNumber"
+                                            @blur="validatePhoneNumber"
                                             :class="[
                                                 'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('phone_number')
@@ -279,6 +281,7 @@
                                                     : 'border-gray-200 focus:ring-black/10 focus:border-black'
                                             ]"
                                             placeholder="(000) 000-0000"
+                                            maxlength="14"
                                         />
                                         <p v-if="getError('phone_number')" class="text-red-500 text-sm mt-1">{{ getError('phone_number') }}</p>
                                     </div>
@@ -732,6 +735,67 @@ const formData = reactive({
 
 const getError = (field) => validationErrors.value?.[field]?.[0] || '';
 
+const formatPhoneNumber = (event) => {
+    // Remove all non-digit characters
+    let value = event.target.value.replace(/\D/g, '');
+    
+    // Format as (XXX) XXX-XXXX
+    if (value.length === 0) {
+        formData.phoneNumber = '';
+    } else if (value.length <= 3) {
+        formData.phoneNumber = `(${value}`;
+    } else if (value.length <= 6) {
+        formData.phoneNumber = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+    } else {
+        formData.phoneNumber = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+    }
+    
+    // Clear format error if format is correct (but preserve server validation errors)
+    if (validatePhoneFormat(formData.phoneNumber)) {
+        if (validationErrors.value?.phone_number) {
+            const errorMsg = validationErrors.value.phone_number[0];
+            if (errorMsg === 'Phone number must be in format (000) 000-0000') {
+                delete validationErrors.value.phone_number;
+            }
+        }
+    }
+};
+
+const validatePhoneFormat = (phone) => {
+    if (!phone) return false;
+    // Check if phone matches format (XXX) XXX-XXXX exactly
+    const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
+    return phoneRegex.test(phone);
+};
+
+const validatePhoneNumber = () => {
+    // Only validate format if phone number is provided and not empty
+    if (formData.phoneNumber && formData.phoneNumber.trim() !== '') {
+        if (!validatePhoneFormat(formData.phoneNumber)) {
+            if (!validationErrors.value) {
+                validationErrors.value = {};
+            }
+            validationErrors.value.phone_number = ['Phone number must be in format (000) 000-0000'];
+        } else {
+            // Clear format error if format is correct
+            if (validationErrors.value?.phone_number) {
+                const errorMsg = validationErrors.value.phone_number[0];
+                if (errorMsg === 'Phone number must be in format (000) 000-0000') {
+                    delete validationErrors.value.phone_number;
+                }
+            }
+        }
+    } else {
+        // Clear format error if field is empty (required validation will be handled by server)
+        if (validationErrors.value?.phone_number) {
+            const errorMsg = validationErrors.value.phone_number[0];
+            if (errorMsg === 'Phone number must be in format (000) 000-0000') {
+                delete validationErrors.value.phone_number;
+            }
+        }
+    }
+};
+
 const handleDataChange = (field, value) => {
     formData[field] = value;
 };
@@ -762,6 +826,14 @@ const handleSubmit = async () => {
         return;
     }
     
+    // Validate phone number format before submitting
+    validatePhoneNumber();
+    
+    // If phone number format is invalid, don't submit
+    if (getError('phone_number')) {
+        return;
+    }
+    
     try {
         isSubmitting.value = true;
 
@@ -770,7 +842,7 @@ const handleSubmit = async () => {
             tenant_id: null, // Can be set if you have tenant context
             name: formData.name,
             email: formData.email,
-            phone_number: formData.phoneNumber,
+            phone_number: formData.phoneNumber ? formData.phoneNumber.replace(/\D/g, '') : '',
             rental_property_address: formData.rentalPropertyAddress,
             city_of_rental_property: formData.cityOfRentalProperty || selectedCity.value,
             best_desc_property: formData.bestDescProperty || null,

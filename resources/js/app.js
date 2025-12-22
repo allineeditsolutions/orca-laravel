@@ -4,6 +4,7 @@ import '../css/app.css';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import PrimeVue from 'primevue/config';
+import ToastService from 'primevue/toastservice';
 import Aura from '@primevue/themes/aura';
 import App from './App.vue';
 import Home from './pages/Home.vue';
@@ -42,5 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+    app.use(ToastService);
     app.mount('#app');
 });

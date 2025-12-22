@@ -619,8 +619,11 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
+import { useToast } from 'primevue/usetoast';
 import StepIndicator from '@/components/newbiz/StepIndicator.vue';
 import confetti from 'canvas-confetti';
+
+const toast = useToast();
 
 const currentStep = ref(1);
 const isSubmitted = ref(false);
@@ -862,8 +865,33 @@ const handleSubmit = async () => {
                     }
                 }
             }
+            
+            // Check if userId is still null after fetching
+            if (userId === null) {
+                isSubmitting.value = false;
+                if (toast) {
+                    toast.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'BDM ID setting not found.',
+                        life: 5000
+                    });
+                } 
+                return;
+            }
         } catch (settingsError) {
-            // Continue with submission even if settings fetch fails
+            isSubmitting.value = false;
+            if (toast) {
+                toast.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to fetch BDM ID setting. Please try again or contact administrator.',
+                    life: 5000
+                });
+            } else {
+                alert('Failed to fetch BDM ID setting. Please try again or contact administrator.');
+            }
+            return;
         }
 
         // Prepare data for API (convert camelCase to snake_case)
@@ -948,7 +976,16 @@ const handleSubmit = async () => {
         // Show success message
         isSubmitted.value = true;
     } catch (error) {
-        alert('An error occurred while saving: ' + error.message);
+        if (toast) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'An error occurred while saving: ' + error.message,
+                life: 5000
+            });
+        } else {
+            alert('An error occurred while saving: ' + error.message);
+        }
         validationErrors.value = {};
     } finally {
         isSubmitting.value = false;

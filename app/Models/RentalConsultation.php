@@ -30,11 +30,13 @@ class RentalConsultation extends Model
         'additional_information',
         'pdform_link',
         'pod_id',
+        'bdm_id',
     ];
 
     protected $casts = [
         'estimated_square_footage' => 'integer',
         'number_of_bedrooms' => 'integer',
         'pod_id' => 'integer',
+        'bdm_id' => 'integer',
     ];
 }

@@ -119,7 +119,6 @@ Route::get('/settings/{var}', function ($var) {
             ], 404);
         }
         
-        // Return the value field (common column names: value, val, setting_value)
         $value = $setting->value ?? $setting->val ?? $setting->setting_value ?? null;
         
         return response()->json([

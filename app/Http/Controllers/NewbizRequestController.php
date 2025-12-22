@@ -29,6 +29,7 @@ class NewbizRequestController extends Controller
             'where_heard_about_orca' => 'nullable|string|max:255',
             'additional_information' => 'nullable|string',
             'pod_id' => 'nullable|integer',
+            'bdm_id' => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {

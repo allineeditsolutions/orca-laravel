@@ -631,7 +631,7 @@ const steps = [
     { number: 2, title: 'Property Information' },
 ];
 
-const selectedCity = ref('');
+const selectedCity = ref('Vancouver');
 
 const cities = [
     'Burnaby',
@@ -716,21 +716,21 @@ const whereHeardAboutOrcaOptions = [
 ];
 
 const formData = reactive({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    rentalPropertyAddress: '',
-    cityOfRentalProperty: '',
-    bestDescProperty: '',
-    estimatedSquareFootage: '',
-    numberOfBedrooms: '',
-    whenPlanningToRent: '',
-    plansWithProperty: '',
-    consideringSelling: '',
-    rentAmountInMind: '',
-    workedWithPropertyManager: '',
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    phoneNumber: '(604) 555-1234',
+    rentalPropertyAddress: '123 Main Street, Suite 201',
+    cityOfRentalProperty: 'Vancouver',
+    bestDescProperty: 'Condo',
+    estimatedSquareFootage: '850',
+    numberOfBedrooms: '2',
+    whenPlanningToRent: 'Immediately (within 30 days)',
+    plansWithProperty: 'Rent long-term (5+ Years)',
+    consideringSelling: 'No, I\'m focused on renting',
+    rentAmountInMind: '$3,000 - $4,999',
+    workedWithPropertyManager: 'No, this is my first time renting',
     whereHeardAboutOrca: 'Google Ads (Sponsored Section)',
-    additionalInformation: '',
+    additionalInformation: 'This is a test property with modern amenities and great location.',
 });
 
 const getError = (field) => validationErrors.value?.[field]?.[0] || '';
@@ -837,10 +837,10 @@ const handleSubmit = async () => {
     try {
         isSubmitting.value = true;
 
-        // Fetch pod_id from settings_json table
-        let podId = null;
+        // Fetch bdm_id from settings_json table
+        let userId = null;
         try {
-            const settingsResponse = await fetch('/api/settings/newbiz_default_pod_id', {
+            const settingsResponse = await fetch('/api/settings/newbiz_default_bdm_selected', {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -850,11 +850,15 @@ const handleSubmit = async () => {
             
             if (settingsResponse.ok) {
                 const settingsResult = await settingsResponse.json();
-                if (settingsResult.success) {
+                if (settingsResult.success && settingsResult.value) {
                     // Use the value field directly from the API response
-                    podId = settingsResult.value || null;
-                    if (podId) {
-                        podId = parseInt(podId);
+                    const value = settingsResult.value.toString().trim();
+                    if (value && value !== 'null' && value !== '') {
+                        userId = parseInt(value);
+                        // Only set if it's a valid number
+                        if (isNaN(userId)) {
+                            userId = null;
+                        }
                     }
                 }
             }
@@ -864,7 +868,7 @@ const handleSubmit = async () => {
 
         // Prepare data for API (convert camelCase to snake_case)
         const submitData = {
-            tenant_id: null, // Can be set if you have tenant context
+            tenant_id: 1, 
             name: formData.name,
             email: formData.email,
             phone_number: formData.phoneNumber ? formData.phoneNumber.replace(/\D/g, '') : '',
@@ -880,7 +884,7 @@ const handleSubmit = async () => {
             worked_with_property_manager: formData.workedWithPropertyManager || null,
             where_heard_about_orca: formData.whereHeardAboutOrca || null,
             additional_information: formData.additionalInformation || null,
-            pod_id: podId,
+            bdm_id: userId,
         };
 
         // Make API call

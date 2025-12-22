@@ -631,7 +631,7 @@ const steps = [
     { number: 2, title: 'Property Information' },
 ];
 
-const selectedCity = ref('Vancouver');
+const selectedCity = ref('');
 
 const cities = [
     'Burnaby',
@@ -716,21 +716,21 @@ const whereHeardAboutOrcaOptions = [
 ];
 
 const formData = reactive({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phoneNumber: '(604) 555-1234',
-    rentalPropertyAddress: '123 Main Street, Suite 201',
-    cityOfRentalProperty: 'Vancouver',
-    bestDescProperty: 'Condo',
-    estimatedSquareFootage: '850',
-    numberOfBedrooms: '2',
-    whenPlanningToRent: 'Immediately (within 30 days)',
-    plansWithProperty: 'Rent long-term (5+ Years)',
-    consideringSelling: 'No, I\'m focused on renting',
-    rentAmountInMind: '$3,000 - $4,999',
-    workedWithPropertyManager: 'No, this is my first time renting',
+    name: '',
+    email: '',
+    phoneNumber: '',
+    rentalPropertyAddress: '',
+    cityOfRentalProperty: '',
+    bestDescProperty: '',
+    estimatedSquareFootage: '',
+    numberOfBedrooms: '',
+    whenPlanningToRent: '',
+    plansWithProperty: '',
+    consideringSelling: '',
+    rentAmountInMind: '',
+    workedWithPropertyManager: '',
     whereHeardAboutOrca: 'Google Ads (Sponsored Section)',
-    additionalInformation: 'This is a test property with modern amenities and great location.',
+    additionalInformation: '',
 });
 
 const getError = (field) => validationErrors.value?.[field]?.[0] || '';
@@ -868,7 +868,7 @@ const handleSubmit = async () => {
 
         // Prepare data for API (convert camelCase to snake_case)
         const submitData = {
-            tenant_id: 1, 
+            tenant_id: null, // Can be set if you have tenant context 
             name: formData.name,
             email: formData.email,
             phone_number: formData.phoneNumber ? formData.phoneNumber.replace(/\D/g, '') : '',

@@ -837,6 +837,31 @@ const handleSubmit = async () => {
     try {
         isSubmitting.value = true;
 
+        // Fetch pod_id from settings_json table
+        let podId = null;
+        try {
+            const settingsResponse = await fetch('/api/settings/newbiz_default_pod_id', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+            });
+            
+            if (settingsResponse.ok) {
+                const settingsResult = await settingsResponse.json();
+                if (settingsResult.success) {
+                    // Use the value field directly from the API response
+                    podId = settingsResult.value || null;
+                    if (podId) {
+                        podId = parseInt(podId);
+                    }
+                }
+            }
+        } catch (settingsError) {
+            // Continue with submission even if settings fetch fails
+        }
+
         // Prepare data for API (convert camelCase to snake_case)
         const submitData = {
             tenant_id: null, // Can be set if you have tenant context
@@ -855,6 +880,7 @@ const handleSubmit = async () => {
             worked_with_property_manager: formData.workedWithPropertyManager || null,
             where_heard_about_orca: formData.whereHeardAboutOrca || null,
             additional_information: formData.additionalInformation || null,
+            pod_id: podId,
         };
 
         // Make API call
@@ -918,7 +944,6 @@ const handleSubmit = async () => {
         // Show success message
         isSubmitted.value = true;
     } catch (error) {
-        console.error('Error submitting form:', error);
         alert('An error occurred while saving: ' + error.message);
         validationErrors.value = {};
     } finally {

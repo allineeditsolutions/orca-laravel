@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\RentalConsultation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class NewbizRequestController extends Controller
 {
@@ -27,6 +28,7 @@ class NewbizRequestController extends Controller
             'worked_with_property_manager' => 'nullable|string|max:255',
             'where_heard_about_orca' => 'nullable|string|max:255',
             'additional_information' => 'nullable|string',
+            'pod_id' => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -38,7 +40,10 @@ class NewbizRequestController extends Controller
         }
 
         try {
-            $newbizRequest = RentalConsultation::create($validator->validated());
+            $validatedData = $validator->validated();
+            $validatedData['pdform_link'] = Str::random(12);
+
+            $newbizRequest = RentalConsultation::create($validatedData);
 
             return response()->json([
                 'success' => true,

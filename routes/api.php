@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PropertyDetailsController;
 use App\Http\Controllers\ScheduleVisitController;
 use App\Http\Controllers\NewbizRequestController;
@@ -103,4 +104,35 @@ Route::post('/schedule-visits', [ScheduleVisitController::class, 'store']);
 
 // Newbiz Request Routes
 Route::post('/newbiz-requests', [NewbizRequestController::class, 'store']);
+
+// Settings Routes
+Route::get('/settings/{var}', function ($var) {
+    try {
+        $setting = DB::table('settings_json')
+            ->where('vars', $var)
+            ->first();
+        
+        if (!$setting) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Setting not found',
+            ], 404);
+        }
+        
+        // Return the value field (common column names: value, val, setting_value)
+        $value = $setting->value ?? $setting->val ?? $setting->setting_value ?? null;
+        
+        return response()->json([
+            'success' => true,
+            'value' => $value,
+            'data' => $setting,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to fetch setting',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
 

@@ -28,10 +28,13 @@ class RentalConsultation extends Model
         'worked_with_property_manager',
         'where_heard_about_orca',
         'additional_information',
+        'pdform_link',
+        'pod_id',
     ];
 
     protected $casts = [
         'estimated_square_footage' => 'integer',
         'number_of_bedrooms' => 'integer',
+        'pod_id' => 'integer',
     ];
 }

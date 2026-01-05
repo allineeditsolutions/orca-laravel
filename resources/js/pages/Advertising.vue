@@ -1,11 +1,29 @@
 <template>
     <div class="min-h-screen bg-gray-50 flex items-start justify-center px-2 sm:px-4 pt-2 pb-4 sm:pb-8 md:pb-12">
-        <!-- Step Indicator -->
-        <StepIndicator v-if="!isSubmitted" :steps="steps" :current-step="currentStep" />
+        <!-- Enhanced Error Message for Invalid Form - Centered -->
+        <div v-if="isInvalidForm" class="fixed inset-0 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+                <div class="p-8 text-center">
+                    <!-- Error Icon -->
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+                        <svg class="h-10 w-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    
+                    <!-- Error Title -->
+                    <h2 class="text-2xl font-bold text-gray-900 mb-3">Invalid Form Access</h2>
+                 
+                </div>
+            </div>
+        </div>
         
-        <div :class="['w-full max-w-6xl lg:max-w-7xl', isSubmitted ? 'mt-0' : 'mt-32 sm:mt-36 md:mt-[120px] lg:mt-[110px]']">
+        <!-- Step Indicator -->
+        <StepIndicator v-if="!isSubmitted && !isInvalidForm" :steps="steps" :current-step="currentStep" />
+        
+        <div :class="['w-full max-w-6xl lg:max-w-7xl', isSubmitted ? 'mt-0' : (isInvalidForm ? 'mt-20' : 'mt-32 sm:mt-36 md:mt-[120px] lg:mt-[110px]')]">
             <!-- Main Form Content - Centered -->
-            <div class="" 
+            <div v-if="!isInvalidForm" class="" 
                  style="scrollbar-width: thin; scrollbar-color: #9ca3af #f3f4f6;" >
                     <div v-if="currentStep === 1" class="p-4 space-y-5 sm:space-y-6 md:space-y-2 ">
                         <OwnerInformationSection
@@ -68,20 +86,20 @@
                             @submit="handleSubmit" 
                         />
                     </div>
-                </div>
-
-
-                <div v-if="currentStep === 1" class="flex-shrink-0 r-mt-3 r-pt-3 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 bg-white flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
-                    <p></p>
-                    <button
-                        @click="handleNext"
-                        class="p-4 cursor-pointer bg-black hover:bg-gray-800 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-semibold flex items-center gap-2 transition-colors duration-200 shadow-lg hover:shadow-xl"
-                    >
-                        Rental Property Information & Features
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
+                    
+                    <div v-if="currentStep === 1" class="flex-shrink-0 r-mt-3 r-pt-3 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 bg-white flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
+                        <p></p>
+                        <button
+                            @click="handleNext"
+                            :disabled="isInvalidForm"
+                            class="p-4 cursor-pointer bg-black hover:bg-gray-800 text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-semibold flex items-center gap-2 transition-colors duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Rental Property Information & Features
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
         </div>
     </div>
@@ -104,6 +122,7 @@ const isSubmitted = ref(false);
 const isSubmitting = ref(false);
 const validationErrors = ref({});
 const newBizRefId = ref(null);
+const isInvalidForm = ref(false);
 
 // Extract NewBizRefId from URL query parameter
 onMounted(() => {
@@ -111,18 +130,21 @@ onMounted(() => {
     const refId = urlParams.get('NewBizRefId');
     if (refId) {
         newBizRefId.value = refId;
+        isInvalidForm.value = false;
+    } else {
+        isInvalidForm.value = true;
     }
 });
 
 const formData = reactive({
     // Owner Information
-    businessLegalName: 'ABC Property Management Inc.',
-    ownerEmail: 'john.doe@example.com',
-    phone: '(604) 555-1234',
-    firstName: 'John',
-    lastName: 'Doe',
-    dateOfBirth: '1985-05-15',
-    residentStatus: 'Resident',
+    businessLegalName: '',
+    ownerEmail: '',
+    phone: '',
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    residentStatus: '',
     coOwners: [],
     
     // Point of Contact
@@ -133,95 +155,95 @@ const formData = reactive({
     pointOfContactPhone: '',
     
     // Mailing Information
-    unitSuite: 'Suite 200',
-    streetAddress: '123 Main Street',
-    city: 'Vancouver',
-    province: 'BC',
-    postalCode: 'V6B 1A1',
+    unitSuite: '',
+    streetAddress: '',
+    city: '',
+    province: '',
+    postalCode: '',
 
     // Step 2 - Rental Property Information & Features
     rental: {
-        unitSuite: 'Unit 305',
-        streetAddress: '456 Oak Avenue',
-        city: 'Vancouver',
-        province: 'BC',
-        postalCode: 'V6B 2C2',
-        neighborhood: 'Downtown',
-        yearBuilt: '2015',
-        totalFloorArea: '1200',
-        keys: 'Fob',
+        unitSuite: '',
+        streetAddress: '',
+        city: '',
+        province: '',
+        postalCode: '',
+        neighborhood: '',
+        yearBuilt: '',
+        totalFloorArea: '',
+        keys: '',
         keysOther: '',
-        bedrooms: '2',
-        bathrooms: '2',
-        den: '1',
-        balconypatio: 'Yes',
-        storage: 'Yes',
-        fireplaceTypes: ['Gas'],
-        alarmCode: '1234',
+        bedrooms: '',
+        bathrooms: '',
+        den: '',
+        balconypatio: '',
+        storage: '',
+        fireplaceTypes: [],
+        alarmCode: '',
         parking: {},
-        parkingLevelStall: 'P2-45',
-        laundry: 'In Unit',
-        heating: ['Forced Air'],
+        parkingLevelStall: '',
+        laundry: '',
+        heating: [],
         heatingType: '',
     },
 
     // Step 3 - Occupancy & Availability
     occupancy: {
-        availableAsap: 'Vacant',
-        renovationPlans: 'Yes',
-        fixedTermOnly: 'No',
-        boostAd: 'Yes',
-        anticipatedDate: '2026-02-01',
-        rentalTerm: 'Long-term',
+        availableAsap: '',
+        renovationPlans: '',
+        fixedTermOnly: '',
+        boostAd: '',
+        anticipatedDate: '',
+        rentalTerm: '',
         tenantVacatingDate: '',
         tenants: [],
         availabilityInfo: '',
         shortTermAvailabilityInfo: '',
-        expectedRenovations: 'Fresh paint and new flooring',
+        expectedRenovations: '',
         fixedTermTenancyDescription: '',
     },
 
     // Step 4 - Utilities/Inclusions/Restrictions
     utilities: {
-        water: 'Included',
-        electricity: 'Tenant Pays',
+        water: '',
+        electricity: '',
         electricitySplitDetail: '',
-        gas: 'Included',
-        heat: 'Included',
-        inclusions: ['Fridge', 'Stove', 'Dishwasher', 'Microwave'],
-        furnishing: 'Unfurnished',
-        pets: 'Yes, with owners approval',
-        propertyType: 'Apartment/Condo',
+        gas: '',
+        heat: '',
+        inclusions: [],
+        furnishing: '',
+        pets: '',
+        propertyType: '',
     },
 
     // Step 5 - Other Details
     other: {
-        strataCompany: 'ABC Strata Management',
-        strataManagerName: 'Jane Smith',
-        strataPhone: '(604) 555-5678',
-        strataEmail: 'jane.smith@strata.com',
-        buildingManagerName: 'Mike Johnson',
-        buildingManagerPhone: '(604) 555-9012',
-        buildingManagerEmail: 'mike.johnson@building.com',
-        moveInFees: '500',
-        amenities: ['Gym', 'Pool', 'Sauna'],
-        signUpFront: 'Yes',
-        maintenance: ['Landscaping', 'Snow Removal'],
+        strataCompany: '',
+        strataManagerName: '',
+        strataPhone: '',
+        strataEmail: '',
+        buildingManagerName: '',
+        buildingManagerPhone: '',
+        buildingManagerEmail: '',
+        moveInFees: '',
+        amenities: [],
+        signUpFront: '',
+        maintenance: [],
         maintenanceFrequencies: {},
-        sprinklersService: 'Yes',
-        hasSelfContainedSuite: 'No',
+        sprinklersService: '',
+        hasSelfContainedSuite: '',
         suiteBedrooms: '',
         suiteTenanted: '',
         suiteTenants: [],
         suiteOtherDetails: '',
-        fuseBox: 'Main floor, utility room',
-        amenitiesFloor: 'Ground floor',
-        bikeStorageLocation: 'Basement level B1',
-        garbageInfo: 'Garbage chute on each floor',
-        mainWaterline: 'City water',
-        amenitiesNotes: 'Gym open 24/7, pool hours 6am-10pm',
-        virtualTour: 'https://example.com/virtual-tour',
-        listingUrl: 'https://example.com/listing',
+        fuseBox: '',
+        amenitiesFloor: '',
+        bikeStorageLocation: '',
+        garbageInfo: '',
+        mainWaterline: '',
+        amenitiesNotes: '',
+        virtualTour: '',
+        listingUrl: '',
     },
 });
 
@@ -532,6 +554,12 @@ const validateStep4 = () => {
 };
 
 const handleNext = () => {
+    // Prevent navigation if form is invalid (missing NewBizRefId)
+    if (isInvalidForm.value || !newBizRefId.value) {
+        alert('Invalid form: Missing NewBizRefId parameter. This form requires a valid reference ID to proceed.');
+        return;
+    }
+    
     // Validate step 1 before proceeding
     if (currentStep.value === 1) {
         if (!validateStep1()) {
@@ -612,6 +640,13 @@ const handleBack = () => {
 const handleSubmit = async () => {
     // Prevent double submission
     if (isSubmitting.value) {
+        return;
+    }
+    
+    // Validate NewBizRefId before submission
+    if (!newBizRefId.value) {
+        alert('Invalid form: Missing NewBizRefId parameter. This form requires a valid reference ID to proceed.');
+        isInvalidForm.value = true;
         return;
     }
     

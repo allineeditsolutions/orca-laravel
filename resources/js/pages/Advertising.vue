@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import StepIndicator from '@/components/advertising/StepIndicator.vue';
 import OwnerInformationSection from '@/components/advertising/OwnerInformationSection.vue';
 import PointOfContactSection from '@/components/advertising/PointOfContactSection.vue';
@@ -103,115 +103,125 @@ const currentStep = ref(1);
 const isSubmitted = ref(false);
 const isSubmitting = ref(false);
 const validationErrors = ref({});
+const newBizRefId = ref(null);
+
+// Extract NewBizRefId from URL query parameter
+onMounted(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refId = urlParams.get('NewBizRefId');
+    if (refId) {
+        newBizRefId.value = refId;
+    }
+});
 
 const formData = reactive({
     // Owner Information
-    businessLegalName: '',
-    ownerEmail: '',
-    phone: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    residentStatus: '',
+    businessLegalName: 'ABC Property Management Inc.',
+    ownerEmail: 'john.doe@example.com',
+    phone: '(604) 555-1234',
+    firstName: 'John',
+    lastName: 'Doe',
+    dateOfBirth: '1985-05-15',
+    residentStatus: 'Resident',
     coOwners: [],
     
     // Point of Contact
-    pointOfContact: '',
+    pointOfContact: 'Same as Main Owner',
     otherPointOfContact: '',
     pointOfContactFirstName: '',
     pointOfContactEmail: '',
     pointOfContactPhone: '',
     
     // Mailing Information
-    unitSuite: '',
-    streetAddress: '',
-    city: '',
-    province: '',
-    postalCode: '',
+    unitSuite: 'Suite 200',
+    streetAddress: '123 Main Street',
+    city: 'Vancouver',
+    province: 'BC',
+    postalCode: 'V6B 1A1',
 
     // Step 2 - Rental Property Information & Features
     rental: {
-        unitSuite: '',
-        streetAddress: '',
-        city: '',
-        province: '',
-        postalCode: '',
-        neighborhood: '',
-        yearBuilt: '',
-        totalFloorArea: '',
-        keys: '',
+        unitSuite: 'Unit 305',
+        streetAddress: '456 Oak Avenue',
+        city: 'Vancouver',
+        province: 'BC',
+        postalCode: 'V6B 2C2',
+        neighborhood: 'Downtown',
+        yearBuilt: '2015',
+        totalFloorArea: '1200',
+        keys: 'Fob',
         keysOther: '',
-        bedrooms: '',
-        bathrooms: '',
-        den: '',
-        balconypatio: '',
-        storage: '',
-        fireplaceTypes: [],
-        alarmCode: '',
+        bedrooms: '2',
+        bathrooms: '2',
+        den: '1',
+        balconypatio: 'Yes',
+        storage: 'Yes',
+        fireplaceTypes: ['Gas'],
+        alarmCode: '1234',
         parking: {},
-        parkingLevelStall: '',
-        laundry: '',
-        heating: [],
+        parkingLevelStall: 'P2-45',
+        laundry: 'In Unit',
+        heating: ['Forced Air'],
         heatingType: '',
     },
 
     // Step 3 - Occupancy & Availability
     occupancy: {
-        availableAsap: '',
-        renovationPlans: '',
-        fixedTermOnly: '',
-        boostAd: '',
-        anticipatedDate: '',
-        rentalTerm: '',
+        availableAsap: 'Vacant',
+        renovationPlans: 'Yes',
+        fixedTermOnly: 'No',
+        boostAd: 'Yes',
+        anticipatedDate: '2026-02-01',
+        rentalTerm: 'Long-term',
         tenantVacatingDate: '',
         tenants: [],
         availabilityInfo: '',
         shortTermAvailabilityInfo: '',
-        expectedRenovations: '',
+        expectedRenovations: 'Fresh paint and new flooring',
         fixedTermTenancyDescription: '',
     },
 
     // Step 4 - Utilities/Inclusions/Restrictions
     utilities: {
-        water: '',
-        electricity: '',
+        water: 'Included',
+        electricity: 'Tenant Pays',
         electricitySplitDetail: '',
-        gas: '',
-        heat: '',
-        inclusions: [],
-        furnishing: '',
-        pets: '',
-        propertyType: '',
+        gas: 'Included',
+        heat: 'Included',
+        inclusions: ['Fridge', 'Stove', 'Dishwasher', 'Microwave'],
+        furnishing: 'Unfurnished',
+        pets: 'Yes, with owners approval',
+        propertyType: 'Apartment/Condo',
     },
 
     // Step 5 - Other Details
     other: {
-        strataCompany: '',
-        strataManagerName: '',
-        strataPhone: '',
-        strataEmail: '',
-        buildingManagerName: '',
-        buildingManagerPhone: '',
-        buildingManagerEmail: '',
-        moveInFees: '',
-        amenities: [],
-        signUpFront: '',
-        maintenance: [],
+        strataCompany: 'ABC Strata Management',
+        strataManagerName: 'Jane Smith',
+        strataPhone: '(604) 555-5678',
+        strataEmail: 'jane.smith@strata.com',
+        buildingManagerName: 'Mike Johnson',
+        buildingManagerPhone: '(604) 555-9012',
+        buildingManagerEmail: 'mike.johnson@building.com',
+        moveInFees: '500',
+        amenities: ['Gym', 'Pool', 'Sauna'],
+        signUpFront: 'Yes',
+        maintenance: ['Landscaping', 'Snow Removal'],
         maintenanceFrequencies: {},
-        sprinklersService: '',
-        hasSelfContainedSuite: '',
+        sprinklersService: 'Yes',
+        hasSelfContainedSuite: 'No',
         suiteBedrooms: '',
         suiteTenanted: '',
         suiteTenants: [],
         suiteOtherDetails: '',
-        fuseBox: '',
-        amenitiesFloor: '',
-        bikeStorageLocation: '',
-        garbageInfo: '',
-        mainWaterline: '',
-        amenitiesNotes: '',
-        virtualTour: '',
-        listingUrl: '',
+        fuseBox: 'Main floor, utility room',
+        amenitiesFloor: 'Ground floor',
+        bikeStorageLocation: 'Basement level B1',
+        garbageInfo: 'Garbage chute on each floor',
+        mainWaterline: 'City water',
+        amenitiesNotes: 'Gym open 24/7, pool hours 6am-10pm',
+        virtualTour: 'https://example.com/virtual-tour',
+        listingUrl: 'https://example.com/listing',
     },
 });
 
@@ -610,6 +620,7 @@ const handleSubmit = async () => {
         
         // Prepare data for API
         const submitData = {
+            request_id: newBizRefId.value,
             business_legal_name: formData.businessLegalName,
             owner_email: formData.ownerEmail,
             owner_phone: formData.phone,

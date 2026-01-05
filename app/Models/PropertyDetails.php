@@ -12,6 +12,7 @@ class PropertyDetails extends Model
     protected $table = 'property_details';
 
     protected $fillable = [
+        'request_id',
         'business_legal_name',
         'owner_email',
         'owner_phone',

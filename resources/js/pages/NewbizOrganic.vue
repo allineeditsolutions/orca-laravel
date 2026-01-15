@@ -554,6 +554,7 @@ const cities = [
     'Port Coquitlam',
     'Port Moody',
     'Richmond',
+    'Squamish',
     'Surrey',
     'Vancouver',
     'West Vancouver',

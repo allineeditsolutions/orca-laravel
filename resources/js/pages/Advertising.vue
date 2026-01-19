@@ -126,6 +126,8 @@ const isInvalidForm = ref(false);
 
 // Extract NewBizRefId from URL query parameter
 onMounted(() => {
+    document.title = 'Advertising';
+
     const urlParams = new URLSearchParams(window.location.search);
     const refId = urlParams.get('NewBizRefId');
     if (refId) {

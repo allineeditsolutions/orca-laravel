@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Orca Realty') }} - Property Management & Rental Services</title>
+    <title>{{ config('app.name', 'Orca Realty') }}</title>
     
     <meta name="description" content="Orca Realty provides professional property management and rental consultation services. Get expert advice and property evaluations.">
     <meta name="theme-color" content="#000000">

@@ -123,16 +123,39 @@ const isSubmitting = ref(false);
 const validationErrors = ref({});
 const newBizRefId = ref(null);
 const isInvalidForm = ref(false);
+const isDev = Boolean(import.meta?.env?.DEV);
 
 // Extract NewBizRefId from URL query parameter
 onMounted(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    const isPrefill = urlParams.get('prefill') === '1';
     const refId = urlParams.get('NewBizRefId');
-    if (refId) {
+    const isLocalHost =
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname.endsWith('.test');
+    const shouldPrefill = isPrefill || isDev || isLocalHost;
+
+    // Allow prefill/testing without a real reference id
+    if (!refId && shouldPrefill) {
+        newBizRefId.value = 'TEST_PREFILL';
+        isInvalidForm.value = false;
+    } else if (refId) {
         newBizRefId.value = refId;
         isInvalidForm.value = false;
     } else {
         isInvalidForm.value = true;
+    }
+
+    // Prefill demo data
+    // - with `?prefill=1`: always prefill
+    // - on localhost / in dev: prefill only when the form is empty
+    if (isPrefill) {
+        applyDummyValues();
+    } else if (shouldPrefill) {
+        if (!formData.ownerEmail && !formData.rental?.streetAddress) {
+            applyDummyValues();
+        }
     }
 });
 
@@ -191,6 +214,7 @@ const formData = reactive({
     occupancy: {
         availableAsap: '',
         renovationPlans: '',
+        availabilityDate: '',
         fixedTermOnly: '',
         boostAd: '',
         anticipatedDate: '',
@@ -206,14 +230,24 @@ const formData = reactive({
     // Step 4 - Utilities/Inclusions/Restrictions
     utilities: {
         water: '',
+        waterSplitDetail: '',
+        waterOtherDetail: '',
         electricity: '',
         electricitySplitDetail: '',
+        electricityOtherDetail: '',
         gas: '',
+        gasSplitDetail: '',
+        gasOtherDetail: '',
         heat: '',
+        heatSplitDetail: '',
+        heatOtherDetail: '',
         inclusions: [],
+        inclusionsOtherDetail: '',
         furnishing: '',
         pets: '',
+        petsOtherDetail: '',
         propertyType: '',
+        propertyTypeOtherDetail: '',
     },
 
     // Step 5 - Other Details
@@ -227,6 +261,7 @@ const formData = reactive({
         buildingManagerEmail: '',
         moveInFees: '',
         amenities: [],
+        amenitiesOtherDetail: '',
         signUpFront: '',
         maintenance: [],
         maintenanceFrequencies: {},
@@ -246,6 +281,158 @@ const formData = reactive({
         listingUrl: '',
     },
 });
+
+// Dev-only dummy values for faster manual testing
+const applyDummyValues = () => {
+    // Step 1 - Owner / Contact / Mailing
+    formData.businessLegalName = 'Acme Holdings Ltd.';
+    formData.ownerEmail = 'owner@example.com';
+    formData.phone = '(604) 555-0123';
+    formData.firstName = 'Jordan';
+    formData.lastName = 'Lee';
+    formData.dateOfBirth = '1985-06-12';
+    formData.residentStatus = 'Resident';
+    formData.coOwners = [
+        {
+            firstName: 'Casey',
+            lastName: 'Nguyen',
+            dateOfBirth: '1987-03-22',
+            ownerEmail: 'coowner@example.com',
+            phone: '(604) 555-0456',
+            residentStatus: 'Non-Resident',
+        },
+    ];
+
+    formData.pointOfContact = 'Other(Specify)';
+    formData.otherPointOfContact = 'Property Assistant';
+    formData.pointOfContactFirstName = 'Avery';
+    formData.pointOfContactEmail = 'contact@example.com';
+    formData.pointOfContactPhone = '(604) 555-0789';
+
+    formData.unitSuite = '1203';
+    formData.streetAddress = '1234 Main St';
+    formData.city = 'Vancouver';
+    formData.province = 'British Columbia';
+    formData.postalCode = 'V5K 0A1';
+
+    // Step 2 - Rental Property Information & Features
+    Object.assign(formData.rental, {
+        unitSuite: '1203',
+        streetAddress: '1234 Main St',
+        city: 'Vancouver',
+        province: 'British Columbia',
+        postalCode: 'V5K 0A1',
+        neighborhood: 'Kitsilano',
+        yearBuilt: '2012',
+        totalFloorArea: '950',
+        keys: 'Other',
+        keysOther: 'Keys are with concierge at front desk (24/7).',
+        bedrooms: '2',
+        bathrooms: '2',
+        den: 'No',
+        balconypatio: 'Yes',
+        storage: 'Yes',
+        fireplaceTypes: ['Gas Fireplace', 'Electric Fireplace'],
+        alarmCode: '1234',
+        parking: { Underground: '1', Street: '1' },
+        parkingLevelStall: 'P2-45',
+        laundry: 'In-Suite',
+        heating: ['Forced Air', 'Other'],
+        heatingType: 'Heat pump with backup baseboards',
+    });
+
+    // Step 3 - Occupancy & Availability
+    Object.assign(formData.occupancy, {
+        availableAsap: 'Tenant Occupied',
+        tenantVacatingDate: '2026-03-01',
+        tenants: [
+            { name: 'Sam Tenant', phone: '(604) 555-0999', email: 'tenant@example.com' },
+        ],
+        renovationPlans: 'No',
+        availabilityDate: '2026-03-15',
+        fixedTermOnly: 'Yes',
+        expectedRenovations: 'Kitchen refresh; paint touch-ups in living room.',
+        boostAd: 'Yes',
+        fixedTermTenancyDescription: 'Owner returning after 12 months for personal use.',
+        anticipatedDate: '2026-02-15',
+        rentalTerm: 'Short-term, less than 1 year',
+        shortTermAvailabilityInfo: 'Available for 6–9 months while owner is overseas.',
+        availabilityInfo: 'Flexible start date; prefer March move-in.',
+    });
+
+    // Step 4 - Utilities/Inclusions/Restrictions
+    Object.assign(formData.utilities, {
+        water: 'Other',
+        waterOtherDetail: 'Water included but subject to strata rules.',
+        waterSplitDetail: '',
+
+        electricity: 'Split',
+        electricitySplitDetail: '30',
+        electricityOtherDetail: '',
+
+        gas: 'Other',
+        gasOtherDetail: 'Gas fireplace usage billed separately if applicable.',
+        gasSplitDetail: '',
+
+        heat: 'Other',
+        heatOtherDetail: 'Heat pump included; baseboard usage billed to tenant.',
+        heatSplitDetail: '',
+
+        inclusions: ['Stove/Oven/Fridge', 'Dishwasher', 'Washer', 'Dryer', 'Wifi', 'Other'],
+        inclusionsOtherDetail: 'Portable A/C unit and one standing fan.',
+        furnishing: 'Unfurnished',
+        pets: 'Other',
+        petsOtherDetail: 'Cats ok, dogs considered under 25 lbs with approval.',
+
+        propertyType: 'Other',
+        propertyTypeOtherDetail: 'Laneway house / coach house',
+    });
+
+    // Step 5 - Other Details (optional)
+    Object.assign(formData.other, {
+        strataCompany: 'Example Strata Management',
+        strataManagerName: 'Taylor Morgan',
+        strataPhone: '(604) 555-0199',
+        strataEmail: 'strata@example.com',
+        buildingManagerName: 'Alex Kim',
+        buildingManagerPhone: '(604) 555-0177',
+        buildingManagerEmail: 'building.manager@example.com',
+        moveInFees: '200.00',
+        amenities: ['Gym', 'Bike Storage', 'Visitor Parking', 'Other'],
+        amenitiesOtherDetail: 'Parcel room and rooftop patio.',
+        signUpFront: 'Yes',
+        maintenance: [
+            'Gutter Maintenance',
+            'Heating system',
+            'Chimney',
+            'Garden Maintenance Seasonal',
+            'Lawn Maintenance',
+        ],
+        maintenanceFrequencies: {
+            'Gutter Maintenance': 'Once a year',
+            'Heating system': 'Annual maintenance is preferred',
+            Chimney: 'Annual maintenance is preferred',
+            'Garden Maintenance Seasonal': 'Monthly gardening, Spring',
+            'Lawn Maintenance': 'Full mowing services included Lawnmower included',
+        },
+        sprinklersService: 'Yes',
+        hasSelfContainedSuite: 'Yes',
+        suiteBedrooms: '1',
+        suiteTenanted: 'Yes',
+        suiteTenants: [
+            { name: 'Suite Tenant', phone: '(604) 555-0222', email: 'suite.tenant@example.com' },
+        ],
+        suiteOtherDetails: 'Separate entrance; shared laundry is not applicable.',
+        fuseBox: 'Garage utility closet (left wall).',
+        amenitiesFloor: 'P2 (Gym), Level 2 (Amenity room)',
+        bikeStorageLocation: 'P1, Room B-14',
+        garbageInfo: 'Garbage chute on each floor; recycling in P1.',
+        mainWaterline: 'Mechanical room on P1.',
+        amenitiesNotes: 'Gym and pool access included for tenants.',
+        virtualTour: 'https://example.com/virtual-tour',
+        listingUrl: 'https://example.com/listing',
+    });
+};
 
 // Computed property for step 5 title based on property type
 const getStep5Title = (propertyType) => {
@@ -661,6 +848,8 @@ const handleSubmit = async () => {
             owner_phone: formData.phone,
             owner_fname: formData.firstName,
             owner_lname: formData.lastName,
+            contract_status: 'NotStarted',
+            pd_status: 'New',
             homeowner_detail: {
                 businessLegalName: formData.businessLegalName,
                 ownerEmail: formData.ownerEmail,

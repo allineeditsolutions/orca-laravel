@@ -47,6 +47,16 @@ class PropertyDetailsController extends Controller
             if (empty($validatedData['request_id'])) {
                 $validatedData['request_id'] = Str::random(12);
             }
+
+            // Default contract_status when submitting property details
+            if (empty($validatedData['contract_status'])) {
+                $validatedData['contract_status'] = 'NotStarted';
+            }
+
+            // Default pd_status when submitting property details
+            if (empty($validatedData['pd_status'])) {
+                $validatedData['pd_status'] = 'New';
+            }
             
             $propertyDetails = PropertyDetails::create($validatedData);
 

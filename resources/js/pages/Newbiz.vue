@@ -634,7 +634,7 @@ const steps = [
     { number: 2, title: 'Property Information' },
 ];
 
-const selectedCity = ref('');
+const selectedCity = ref('Vancouver');
 
 const cities = [
     'Burnaby',
@@ -720,21 +720,21 @@ const whereHeardAboutOrcaOptions = [
 ];
 
 const formData = reactive({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    rentalPropertyAddress: '',
-    cityOfRentalProperty: '',
-    bestDescProperty: '',
-    estimatedSquareFootage: '',
-    numberOfBedrooms: '',
-    whenPlanningToRent: '',
-    plansWithProperty: '',
-    consideringSelling: '',
-    rentAmountInMind: '',
-    workedWithPropertyManager: '',
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    phoneNumber: '(604) 555-1234',
+    rentalPropertyAddress: '123 Main Street, Suite 201',
+    cityOfRentalProperty: 'Vancouver',
+    bestDescProperty: 'Condo',
+    estimatedSquareFootage: '850',
+    numberOfBedrooms: '2',
+    whenPlanningToRent: 'Immediately (within 30 days)',
+    plansWithProperty: 'Rent long-term (5+ Years)',
+    consideringSelling: 'No, I\'m focused on renting',
+    rentAmountInMind: '$3,000 - $4,999',
+    workedWithPropertyManager: 'No, I\'ve always managed myself',
     whereHeardAboutOrca: 'Google Ads (Sponsored Section)',
-    additionalInformation: '',
+    additionalInformation: 'Property is in excellent condition with recent renovations. Looking forward to working with Orca Realty.',
 });
 
 const getError = (field) => validationErrors.value?.[field]?.[0] || '';
@@ -874,7 +874,7 @@ const handleSubmit = async () => {
                     toast.add({
                         severity: 'error',
                         summary: 'Error',
-                        detail: 'BDM ID setting not found.',
+                        detail: 'BDM ID setting not found. Please contact the administrator.',
                         life: 5000
                     });
                 } 
@@ -895,6 +895,52 @@ const handleSubmit = async () => {
             return;
         }
 
+        // Fetch pod_id from settings_json table using default_pods_id column
+        let podId = null;
+        try {
+            const podSettingsResponse = await fetch('/api/settings/default_pods_id', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+            });
+            
+            if (podSettingsResponse.ok) {
+                const podSettingsResult = await podSettingsResponse.json();
+                // Check multiple possible fields: value, default_pods_id from data, or data.default_pods_id
+                let podValue = null;
+                if (podSettingsResult.success) {
+                    // First try the value field
+                    if (podSettingsResult.value) {
+                        podValue = podSettingsResult.value;
+                    }
+                    // Also check if default_pods_id exists in the data object
+                    else if (podSettingsResult.data && podSettingsResult.data.default_pods_id) {
+                        podValue = podSettingsResult.data.default_pods_id;
+                    }
+                    // Also check direct default_pods_id field
+                    else if (podSettingsResult.default_pods_id) {
+                        podValue = podSettingsResult.default_pods_id;
+                    }
+                    
+                    if (podValue) {
+                        const podValueStr = podValue.toString().trim();
+                        if (podValueStr && podValueStr !== 'null' && podValueStr !== '') {
+                            podId = parseInt(podValueStr);
+                            // Only set if it's a valid number
+                            if (isNaN(podId)) {
+                                podId = null;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (podSettingsError) {
+            // pod_id is optional, so we don't fail if it's not found
+            console.warn('Failed to fetch POD ID from default_pods_id setting:', podSettingsError);
+        }
+
         // Prepare data for API (convert camelCase to snake_case)
         const submitData = {
             tenant_id: null, // Can be set if you have tenant context 
@@ -913,6 +959,10 @@ const handleSubmit = async () => {
             worked_with_property_manager: formData.workedWithPropertyManager || null,
             where_heard_about_orca: formData.whereHeardAboutOrca || null,
             additional_information: formData.additionalInformation || null,
+            additional_data: {
+                form_from: 'newbiz'
+            },
+            pod_id: podId !== null && podId !== undefined ? podId : null,
             bdm_id: userId,
         };
 

@@ -235,9 +235,15 @@
                                     <input
                                         type="text"
                                         v-model="formData.name"
-                                        class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                        :class="[
+                                            'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                            getError('name')
+                                                ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                        ]"
                                         placeholder="Enter your name"
                                     />
+                                    <p v-if="getError('name')" class="text-red-500 text-sm mt-1">{{ getError('name') }}</p>
                                 </div>
 
                                 <!-- Email and Phone Number - 2 Columns -->
@@ -250,9 +256,15 @@
                                         <input
                                             type="email"
                                             v-model="formData.email"
-                                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('email')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                             placeholder="Enter your email"
                                         />
+                                        <p v-if="getError('email')" class="text-red-500 text-sm mt-1">{{ getError('email') }}</p>
                                     </div>
 
                                     <!-- Phone Number -->
@@ -263,9 +275,18 @@
                                         <input
                                             type="tel"
                                             v-model="formData.phoneNumber"
-                                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            @input="formatPhoneNumber"
+                                            @blur="validatePhoneNumber"
+                                            :class="[
+                                                'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('phone_number')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                             placeholder="(000) 000-0000"
+                                            maxlength="14"
                                         />
+                                        <p v-if="getError('phone_number')" class="text-red-500 text-sm mt-1">{{ getError('phone_number') }}</p>
                                     </div>
                                 </div>
 
@@ -279,10 +300,16 @@
                                     </label>
                                     <textarea
                                         v-model="formData.rentalPropertyAddress"
-                                        class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 resize-y min-h-[120px] sm:min-h-[140px] lg:min-h-[160px] bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                        :class="[
+                                            'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 resize-y min-h-[120px] sm:min-h-[140px] lg:min-h-[160px] bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                            getError('rental_property_address')
+                                                ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                        ]"
                                         placeholder="Enter your rental property address"
                                         rows="4"
                                     ></textarea>
+                                    <p v-if="getError('rental_property_address')" class="text-red-500 text-sm mt-1">{{ getError('rental_property_address') }}</p>
                                 </div>
 
                                 <!-- City of Rental Property Address -->
@@ -293,11 +320,17 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.cityOfRentalProperty"
-                                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('city_of_rental_property')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                         >
                                             <option value="">-Select Option-</option>
                                             <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
                                         </select>
+                                        <p v-if="getError('city_of_rental_property')" class="text-red-500 text-sm mt-1">{{ getError('city_of_rental_property') }}</p>
                                         <div class="absolute inset-y-0 right-0 flex items-center pointer-events-none">
                                             <svg class="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
@@ -313,11 +346,17 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.bestDescProperty"
-                                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('best_desc_property')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                         >
                                             <option value="">-Select Option-</option>
                                             <option v-for="option in bestDescPropertyOptions" :key="option" :value="option">{{ option }}</option>
                                         </select>
+                                        <p v-if="getError('best_desc_property')" class="text-red-500 text-sm mt-1">{{ getError('best_desc_property') }}</p>
                                         <div class="absolute inset-y-0 right-0 flex items-center pointer-events-none">
                                             <svg class="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
@@ -336,10 +375,16 @@
                                         <input
                                             type="number"
                                             v-model="formData.estimatedSquareFootage"
-                                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('estimated_square_footage')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                             placeholder="0"
                                             min="0"
                                         />
+                                        <p v-if="getError('estimated_square_footage')" class="text-red-500 text-sm mt-1">{{ getError('estimated_square_footage') }}</p>
                                     </div>
 
                                     <!-- Number of Bedrooms -->
@@ -350,10 +395,16 @@
                                         <input
                                             type="number"
                                             v-model="formData.numberOfBedrooms"
-                                            class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('number_of_bedrooms')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                             placeholder="0"
                                             min="0"
                                         />
+                                        <p v-if="getError('number_of_bedrooms')" class="text-red-500 text-sm mt-1">{{ getError('number_of_bedrooms') }}</p>
                                     </div>
                                 </div>
 
@@ -365,11 +416,17 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.whenPlanningToRent"
-                                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('when_planning_to_rent')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                         >
                                             <option value="">-Select Option-</option>
                                             <option v-for="option in whenPlanningToRentOptions" :key="option" :value="option">{{ option }}</option>
                                         </select>
+                                        <p v-if="getError('when_planning_to_rent')" class="text-red-500 text-sm mt-1">{{ getError('when_planning_to_rent') }}</p>
                                         <div class="absolute inset-y-0 right-0 flex items-center pr-4 sm:pr-6 md:pr-8 lg:pr-10 xl:pr-12 pointer-events-none">
                                             <svg class="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
@@ -386,11 +443,17 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.plansWithProperty"
-                                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('plans_with_property')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                         >
                                             <option value="">-Select Option-</option>
                                             <option v-for="option in plansWithPropertyOptions" :key="option" :value="option">{{ option }}</option>
                                         </select>
+                                        <p v-if="getError('plans_with_property')" class="text-red-500 text-sm mt-1">{{ getError('plans_with_property') }}</p>
                                         <div class="absolute inset-y-0 right-0 flex items-center pr-4 sm:pr-6 md:pr-8 lg:pr-10 xl:pr-12 pointer-events-none">
                                             <svg class="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
@@ -407,11 +470,17 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.consideringSelling"
-                                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('considering_selling')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                         >
                                             <option value="">-Select Option-</option>
                                             <option v-for="option in consideringSellingOptions" :key="option" :value="option">{{ option }}</option>
                                         </select>
+                                        <p v-if="getError('considering_selling')" class="text-red-500 text-sm mt-1">{{ getError('considering_selling') }}</p>
                                         <div class="absolute inset-y-0 right-0 flex items-center pr-4 sm:pr-6 md:pr-8 lg:pr-10 xl:pr-12 pointer-events-none">
                                             <svg class="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
@@ -428,11 +497,17 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.rentAmountInMind"
-                                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('rent_amount_in_mind')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                         >
                                             <option value="">-Select Option-</option>
                                             <option v-for="option in rentAmountInMindOptions" :key="option" :value="option">{{ option }}</option>
                                         </select>
+                                        <p v-if="getError('rent_amount_in_mind')" class="text-red-500 text-sm mt-1">{{ getError('rent_amount_in_mind') }}</p>
                                         <div class="absolute inset-y-0 right-0 flex items-center pr-4 sm:pr-6 md:pr-8 lg:pr-10 xl:pr-12 pointer-events-none">
                                             <svg class="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
@@ -449,11 +524,17 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.workedWithPropertyManager"
-                                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('worked_with_property_manager')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                         >
                                             <option value="">-Select Option-</option>
                                             <option v-for="option in workedWithPropertyManagerOptions" :key="option" :value="option">{{ option }}</option>
                                         </select>
+                                        <p v-if="getError('worked_with_property_manager')" class="text-red-500 text-sm mt-1">{{ getError('worked_with_property_manager') }}</p>
                                         <div class="absolute inset-y-0 right-0 flex items-center pr-4 sm:pr-6 md:pr-8 lg:pr-10 xl:pr-12 pointer-events-none">
                                             <svg class="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
@@ -470,11 +551,17 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.whereHeardAboutOrca"
-                                            class="w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium"
+                                            :class="[
+                                                'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
+                                                getError('where_heard_about_orca')
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-200 focus:ring-black/10 focus:border-black'
+                                            ]"
                                         >
                                             <option value="">-Select Option-</option>
                                             <option v-for="option in whereHeardAboutOrcaOptions" :key="option" :value="option">{{ option }}</option>
                                         </select>
+                                        <p v-if="getError('where_heard_about_orca')" class="text-red-500 text-sm mt-1">{{ getError('where_heard_about_orca') }}</p>
                                         <div class="absolute inset-y-0 right-0 flex items-center pr-4 sm:pr-6 md:pr-8 lg:pr-10 xl:pr-12 pointer-events-none">
                                             <svg class="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
@@ -510,10 +597,18 @@
                                 </button>
                                 <button
                                     @click="handleSubmit"
-                                    class="group relative w-full sm:w-auto p-2 px-5 rounded-xl font-semibold text-sm sm:text-base md:text-lg bg-black hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-100 flex items-center justify-center gap-2 cursor-pointer"
+                                    :disabled="isSubmitting"
+                                    :class="[
+                                        'group relative w-full sm:w-auto p-2 px-5 rounded-xl font-semibold text-sm sm:text-base md:text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-100 flex items-center justify-center gap-2',
+                                        isSubmitting
+                                            ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                                            : 'bg-black hover:bg-gray-800 text-white cursor-pointer'
+                                    ]"
                                 >
-                                    <span class="text-sm sm:text-base">Submit Request</span>
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <span class="text-sm sm:text-base">
+                                        {{ isSubmitting ? 'Submitting...' : 'Submit Request' }}
+                                    </span>
+                                    <svg v-if="!isSubmitting" class="w-4 h-4 sm:w-5 sm:h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                     </svg>
                                 </button>
@@ -528,17 +623,22 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
+import { useToast } from 'primevue/usetoast';
 import StepIndicator from '@/components/newbiz-organic/StepIndicator.vue';
 import confetti from 'canvas-confetti';
 
+const toast = useToast();
+
 const currentStep = ref(1);
 const isSubmitted = ref(false);
+const isSubmitting = ref(false);
+const validationErrors = ref({});
 const steps = [
     { number: 1, title: 'Property Location' },
     { number: 2, title: 'Property Information' },
 ];
 
-const selectedCity = ref('');
+const selectedCity = ref('Surrey');
 
 const cities = [
     'Burnaby',
@@ -624,22 +724,85 @@ const whereHeardAboutOrcaOptions = [
 ];
 
 const formData = reactive({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    rentalPropertyAddress: '',
-    cityOfRentalProperty: '',
-    bestDescProperty:'',
-    estimatedSquareFootage: '',
-    numberOfBedrooms: '',
-    whenPlanningToRent: '',
-    plansWithProperty: '',
-    consideringSelling: '',
-    rentAmountInMind: '',
-    workedWithPropertyManager: '',
-    whereHeardAboutOrca: '',
-    additionalInformation: '',
+    name: 'Jane Smith',
+    email: 'jane.smith@example.com',
+    phoneNumber: '(778) 555-9876',
+    rentalPropertyAddress: '456 Oak Avenue, Unit 305',
+    cityOfRentalProperty: 'Surrey',
+    bestDescProperty: 'House',
+    estimatedSquareFootage: '1200',
+    numberOfBedrooms: '3',
+    whenPlanningToRent: 'Within the next 1-3 Months',
+    plansWithProperty: 'Rent medium-term (1-5 Years)',
+    consideringSelling: 'Possibly, within the next 1-2 years',
+    rentAmountInMind: '$2,000 - $2,999',
+    workedWithPropertyManager: 'Yes, in the past',
+    whereHeardAboutOrca: 'Google Search (General Results)',
+    additionalInformation: 'This is a family home with a large backyard. Recently painted and has new appliances. Looking for reliable tenants.',
 });
+
+const getError = (field) => validationErrors.value?.[field]?.[0] || '';
+
+const formatPhoneNumber = (event) => {
+    // Remove all non-digit characters
+    let value = event.target.value.replace(/\D/g, '');
+    
+    // Format as (XXX) XXX-XXXX
+    if (value.length === 0) {
+        formData.phoneNumber = '';
+    } else if (value.length <= 3) {
+        formData.phoneNumber = `(${value}`;
+    } else if (value.length <= 6) {
+        formData.phoneNumber = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+    } else {
+        formData.phoneNumber = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+    }
+    
+    // Clear format error if format is correct (but preserve server validation errors)
+    if (validatePhoneFormat(formData.phoneNumber)) {
+        if (validationErrors.value?.phone_number) {
+            const errorMsg = validationErrors.value.phone_number[0];
+            if (errorMsg === 'Phone number must be in format (000) 000-0000') {
+                delete validationErrors.value.phone_number;
+            }
+        }
+    }
+};
+
+const validatePhoneFormat = (phone) => {
+    if (!phone) return false;
+    // Check if phone matches format (XXX) XXX-XXXX exactly
+    const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
+    return phoneRegex.test(phone);
+};
+
+const validatePhoneNumber = () => {
+    // Only validate format if phone number is provided and not empty
+    if (formData.phoneNumber && formData.phoneNumber.trim() !== '') {
+        if (!validatePhoneFormat(formData.phoneNumber)) {
+            if (!validationErrors.value) {
+                validationErrors.value = {};
+            }
+            validationErrors.value.phone_number = ['Phone number must be in format (000) 000-0000'];
+        } else {
+            // Clear format error if format is correct
+            if (validationErrors.value?.phone_number) {
+                const errorMsg = validationErrors.value.phone_number[0];
+                if (errorMsg === 'Phone number must be in format (000) 000-0000') {
+                    delete validationErrors.value.phone_number;
+                }
+            }
+        }
+    } else {
+        // Clear format error if field is empty (required validation will be handled by server)
+        if (validationErrors.value?.phone_number) {
+            const errorMsg = validationErrors.value.phone_number[0];
+            if (errorMsg === 'Phone number must be in format (000) 000-0000') {
+                delete validationErrors.value.phone_number;
+            }
+        }
+    }
+};
 
 const handleDataChange = (field, value) => {
     formData[field] = value;
@@ -665,42 +828,230 @@ const handleBack = () => {
     }
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
+    // Prevent double submission
+    if (isSubmitting.value) {
+        return;
+    }
     
-    // Add confetti effect
-    const duration = 3000;
-    const end = Date.now() + duration;
-
-    const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#FF1493', '#9370DB', '#FF69B4'];
+    // Validate phone number format before submitting
+    validatePhoneNumber();
     
-    // Continuous confetti from sides
-    (function frame() {
-        // Confetti from left side
-        confetti({
-            particleCount: 2,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0 },
-            colors: colors
-        });
-        // Confetti from right side
-        confetti({
-            particleCount: 2,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1 },
-            colors: colors
-        });
+    // If phone number format is invalid, don't submit
+    if (getError('phone_number')) {
+        return;
+    }
+    
+    try {
+        isSubmitting.value = true;
 
-        if (Date.now() < end) {
-            requestAnimationFrame(frame);
+        // Fetch bdm_id from settings_json table
+        let userId = null;
+        try {
+            const settingsResponse = await fetch('/api/settings/newbiz_default_bdm_selected', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+            });
+            
+            if (settingsResponse.ok) {
+                const settingsResult = await settingsResponse.json();
+                if (settingsResult.success && settingsResult.value) {
+                    // Use the value field directly from the API response
+                    const value = settingsResult.value.toString().trim();
+                    if (value && value !== 'null' && value !== '') {
+                        userId = parseInt(value);
+                        // Only set if it's a valid number
+                        if (isNaN(userId)) {
+                            userId = null;
+                        }
+                    }
+                }
+            }
+            
+            // Check if userId is still null after fetching
+            if (userId === null) {
+                isSubmitting.value = false;
+                if (toast) {
+                    toast.add({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'BDM ID setting not found. Please contact the administrator.',
+                        life: 5000
+                    });
+                } 
+                return;
+            }
+        } catch (settingsError) {
+            isSubmitting.value = false;
+            if (toast) {
+                toast.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Failed to fetch BDM ID setting. Please try again or contact administrator.',
+                    life: 5000
+                });
+            } else {
+                alert('Failed to fetch BDM ID setting. Please try again or contact administrator.');
+            }
+            return;
         }
-    }());
-    
-    // Show success message
-    isSubmitted.value = true;
-    
-    // You can add API call here
+
+        // Fetch pod_id from settings_json table using default_pods_id column
+        let podId = null;
+        try {
+            const podSettingsResponse = await fetch('/api/settings/default_pods_id', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+            });
+            
+            if (podSettingsResponse.ok) {
+                const podSettingsResult = await podSettingsResponse.json();
+                // Check multiple possible fields: value, default_pods_id from data, or data.default_pods_id
+                let podValue = null;
+                if (podSettingsResult.success) {
+                    // First try the value field
+                    if (podSettingsResult.value) {
+                        podValue = podSettingsResult.value;
+                    }
+                    // Also check if default_pods_id exists in the data object
+                    else if (podSettingsResult.data && podSettingsResult.data.default_pods_id) {
+                        podValue = podSettingsResult.data.default_pods_id;
+                    }
+                    // Also check direct default_pods_id field
+                    else if (podSettingsResult.default_pods_id) {
+                        podValue = podSettingsResult.default_pods_id;
+                    }
+                    
+                    if (podValue) {
+                        const podValueStr = podValue.toString().trim();
+                        if (podValueStr && podValueStr !== 'null' && podValueStr !== '') {
+                            podId = parseInt(podValueStr);
+                            // Only set if it's a valid number
+                            if (isNaN(podId)) {
+                                podId = null;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (podSettingsError) {
+            // pod_id is optional, so we don't fail if it's not found
+            console.warn('Failed to fetch POD ID from default_pods_id setting:', podSettingsError);
+        }
+
+        // Debug: Log pod_id value
+        console.log('POD ID fetched:', podId);
+        console.log('BDM ID fetched:', userId);
+
+        // Prepare data for API (convert camelCase to snake_case)
+        const submitData = {
+            tenant_id: null, // Can be set if you have tenant context 
+            name: formData.name,
+            email: formData.email,
+            phone_number: formData.phoneNumber ? formData.phoneNumber.replace(/\D/g, '') : '',
+            rental_property_address: formData.rentalPropertyAddress,
+            city_of_rental_property: formData.cityOfRentalProperty || selectedCity.value,
+            best_desc_property: formData.bestDescProperty || null,
+            estimated_square_footage: formData.estimatedSquareFootage ? parseInt(formData.estimatedSquareFootage) : null,
+            number_of_bedrooms: formData.numberOfBedrooms ? parseInt(formData.numberOfBedrooms) : null,
+            when_planning_to_rent: formData.whenPlanningToRent || null,
+            plans_with_property: formData.plansWithProperty || null,
+            considering_selling: formData.consideringSelling || null,
+            rent_amount_in_mind: formData.rentAmountInMind || null,
+            worked_with_property_manager: formData.workedWithPropertyManager || null,
+            where_heard_about_orca: formData.whereHeardAboutOrca || null,
+            additional_information: formData.additionalInformation || null,
+            additional_data: {
+                form_from: 'newbiz-organic'
+            },
+            pod_id: podId !== null && podId !== undefined ? podId : null,
+            bdm_id: userId,
+        };
+
+        // Debug: Log the submitData to verify pod_id is included
+        console.log('Submit data with pod_id:', submitData);
+
+        // Make API call
+        const response = await fetch('/api/newbiz-requests', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+            },
+            body: JSON.stringify(submitData),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            // Handle validation errors (same pattern as Advertising.vue)
+            if (response.status === 422 && result.errors) {
+                validationErrors.value = result.errors;
+                const errorMessages = Object.values(result.errors).flat().join('\n');
+                isSubmitting.value = false;
+                return;
+            }
+            // Show the actual error message from the server
+            const errorMessage = result.error || result.message || 'Failed to save rental consultation';
+            throw new Error(errorMessage);
+        }
+
+        validationErrors.value = {};
+
+        // Add confetti effect on success
+        const duration = 3000;
+        const end = Date.now() + duration;
+
+        const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#FF1493', '#9370DB', '#FF69B4'];
+        
+        // Continuous confetti from sides
+        (function frame() {
+            // Confetti from left side
+            confetti({
+                particleCount: 2,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: colors
+            });
+            // Confetti from right side
+            confetti({
+                particleCount: 2,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: colors
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        }());
+        
+        // Show success message
+        isSubmitted.value = true;
+    } catch (error) {
+        if (toast) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'An error occurred while saving: ' + error.message,
+                life: 5000
+            });
+        } else {
+            alert('An error occurred while saving: ' + error.message);
+        }
+        validationErrors.value = {};
+    } finally {
+        isSubmitting.value = false;
+    }
 };
 </script>
 

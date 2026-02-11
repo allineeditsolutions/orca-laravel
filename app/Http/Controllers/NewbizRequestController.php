@@ -28,6 +28,7 @@ class NewbizRequestController extends Controller
             'worked_with_property_manager' => 'nullable|string|max:255',
             'where_heard_about_orca' => 'nullable|string|max:255',
             'additional_information' => 'nullable|string',
+            'additional_data' => 'nullable|array',
             'pod_id' => 'nullable|integer',
             'bdm_id' => 'nullable|integer',
         ]);

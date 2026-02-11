@@ -28,6 +28,7 @@ class RentalConsultation extends Model
         'worked_with_property_manager',
         'where_heard_about_orca',
         'additional_information',
+        'additional_data',
         'pdform_link',
         'pod_id',
         'bdm_id',
@@ -38,5 +39,6 @@ class RentalConsultation extends Model
         'number_of_bedrooms' => 'integer',
         'pod_id' => 'integer',
         'bdm_id' => 'integer',
+        'additional_data' => 'array',
     ];
 }

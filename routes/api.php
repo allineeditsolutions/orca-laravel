@@ -119,7 +119,7 @@ Route::get('/settings/{var}', function ($var) {
             ], 404);
         }
         
-        $value = $setting->value ?? $setting->val ?? $setting->setting_value ?? null;
+        $value = $setting->value ?? $setting->val ?? $setting->setting_value ?? $setting->default_pods_id ?? null;
         
         return response()->json([
             'success' => true,

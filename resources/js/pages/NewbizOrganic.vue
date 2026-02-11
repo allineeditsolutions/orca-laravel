@@ -898,7 +898,6 @@ const handleSubmit = async () => {
             }
             return;
         }
-
         // Fetch pod_id from settings_json table using default_pods_id column
         let podId = null;
         try {

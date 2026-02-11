@@ -16,6 +16,7 @@ Route::get('/test', function () {
     ]);
 });
 
+
 Route::get('/user', function () {
     return response()->json([
         'message' => 'User endpoint - this would return user data',

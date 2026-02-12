@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gray-50 flex items-center justify-center px-2 sm:px-4 py-4 sm:py-8 md:py-12">
+    <div class="min-h-screen bg-gray-200 flex items-center justify-center px-2 sm:px-4 py-4 sm:py-8 md:py-12">
         <!-- Top Accent Bar -->
         <div class="fixed top-0 left-0 right-0 bg-black h-2 z-10"></div>
         
@@ -232,6 +232,7 @@
                                     <input
                                         type="text"
                                         v-model="formData.name"
+                                        @input="clearError('name')"
                                         :class="[
                                             'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                             getError('name')
@@ -253,6 +254,7 @@
                                         <input
                                             type="email"
                                             v-model="formData.email"
+                                            @input="clearError('email')"
                                             :class="[
                                                 'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('email')
@@ -272,7 +274,7 @@
                                         <input
                                             type="tel"
                                             v-model="formData.phoneNumber"
-                                            @input="formatPhoneNumber"
+                                            @input="handlePhoneInput"
                                             @blur="validatePhoneNumber"
                                             :class="[
                                                 'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
@@ -297,6 +299,7 @@
                                     </label>
                                     <textarea
                                         v-model="formData.rentalPropertyAddress"
+                                        @input="clearError('rental_property_address')"
                                         :class="[
                                             'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 resize-y min-h-[120px] sm:min-h-[140px] lg:min-h-[160px] bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                             getError('rental_property_address')
@@ -317,6 +320,7 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.cityOfRentalProperty"
+                                            @change="clearError('city_of_rental_property')"
                                             :class="[
                                                 'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('city_of_rental_property')
@@ -343,6 +347,7 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.bestDescProperty"
+                                            @change="clearError('best_desc_property')"
                                             :class="[
                                                 'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('best_desc_property')
@@ -372,6 +377,7 @@
                                         <input
                                             type="number"
                                             v-model="formData.estimatedSquareFootage"
+                                            @input="clearError('estimated_square_footage')"
                                             :class="[
                                                 'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('estimated_square_footage')
@@ -392,6 +398,7 @@
                                         <input
                                             type="number"
                                             v-model="formData.numberOfBedrooms"
+                                            @input="clearError('number_of_bedrooms')"
                                             :class="[
                                                 'w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('number_of_bedrooms')
@@ -413,6 +420,7 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.whenPlanningToRent"
+                                            @change="clearError('when_planning_to_rent')"
                                             :class="[
                                                 'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('when_planning_to_rent')
@@ -440,6 +448,7 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.plansWithProperty"
+                                            @change="clearError('plans_with_property')"
                                             :class="[
                                                 'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('plans_with_property')
@@ -467,6 +476,7 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.consideringSelling"
+                                            @change="clearError('considering_selling')"
                                             :class="[
                                                 'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('considering_selling')
@@ -494,6 +504,7 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.rentAmountInMind"
+                                            @change="clearError('rent_amount_in_mind')"
                                             :class="[
                                                 'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('rent_amount_in_mind')
@@ -521,6 +532,7 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.workedWithPropertyManager"
+                                            @change="clearError('worked_with_property_manager')"
                                             :class="[
                                                 'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('worked_with_property_manager')
@@ -548,6 +560,7 @@
                                     <div class="relative">
                                         <select
                                             v-model="formData.whereHeardAboutOrca"
+                                            @change="clearError('where_heard_about_orca')"
                                             :class="[
                                                 'w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl font-medium',
                                                 getError('where_heard_about_orca')
@@ -618,7 +631,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, nextTick, onMounted, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import StepIndicator from '@/components/newbiz/StepIndicator.vue';
 import confetti from 'canvas-confetti';
@@ -634,7 +647,7 @@ const steps = [
     { number: 2, title: 'Property Information' },
 ];
 
-const selectedCity = ref('Vancouver');
+const selectedCity = ref('');
 
 const cities = [
     'Burnaby',
@@ -720,24 +733,49 @@ const whereHeardAboutOrcaOptions = [
 ];
 
 const formData = reactive({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phoneNumber: '(604) 555-1234',
-    rentalPropertyAddress: '123 Main Street, Suite 201',
-    cityOfRentalProperty: 'Vancouver',
-    bestDescProperty: 'Condo',
-    estimatedSquareFootage: '850',
-    numberOfBedrooms: '2',
-    whenPlanningToRent: 'Immediately (within 30 days)',
-    plansWithProperty: 'Rent long-term (5+ Years)',
-    consideringSelling: 'No, I\'m focused on renting',
-    rentAmountInMind: '$3,000 - $4,999',
-    workedWithPropertyManager: 'No, I\'ve always managed myself',
+    name: '',
+    email: '',
+    phoneNumber: '',
+    rentalPropertyAddress: '',
+    cityOfRentalProperty: '',
+    bestDescProperty: '',
+    estimatedSquareFootage: '',
+    numberOfBedrooms: '',
+    whenPlanningToRent: '',
+    plansWithProperty: '',
+    consideringSelling: '',
+    rentAmountInMind: '',
+    workedWithPropertyManager: '',
     whereHeardAboutOrca: 'Google Ads (Sponsored Section)',
-    additionalInformation: 'Property is in excellent condition with recent renovations. Looking forward to working with Orca Realty.',
+    additionalInformation: '',
 });
 
-const getError = (field) => validationErrors.value?.[field]?.[0] || '';
+// Auto-select the only option for "Where did you hear about Orca Realty?"
+onMounted(() => {
+    // Since there's only one option, auto-select it
+    formData.whereHeardAboutOrca = 'Google Ads (Sponsored Section)';
+});
+
+// Watch for city selection and auto-navigate to next step
+watch(selectedCity, (newValue) => {
+    if (newValue && currentStep.value === 1) {
+        handleNext();
+    }
+});
+
+const getError = (field) => {
+    if (!validationErrors.value || !validationErrors.value[field]) {
+        return '';
+    }
+    const error = validationErrors.value[field];
+    return Array.isArray(error) ? error[0] : error;
+};
+
+const clearError = (field) => {
+    if (validationErrors.value?.[field]) {
+        delete validationErrors.value[field];
+    }
+};
 
 const formatPhoneNumber = (event) => {
     // Remove all non-digit characters
@@ -763,6 +801,11 @@ const formatPhoneNumber = (event) => {
             }
         }
     }
+};
+
+const handlePhoneInput = (event) => {
+    formatPhoneNumber(event);
+    clearError('phone_number');
 };
 
 const validatePhoneFormat = (phone) => {
@@ -841,6 +884,8 @@ const handleSubmit = async () => {
     try {
         isSubmitting.value = true;
 
+        const errors = [];
+
         // Fetch bdm_id from settings_json table
         let userId = null;
         try {
@@ -867,78 +912,32 @@ const handleSubmit = async () => {
                 }
             }
             
-            // Check if userId is still null after fetching
-            if (userId === null) {
-                isSubmitting.value = false;
-                if (toast) {
+            // Check if userId is still null or 0 after fetching
+            if (userId === null || userId === 0) {
+                errors.push('BDM ID setting not found or not configured. Please contact the administrator.');
+            }
+        } catch (settingsError) {
+            errors.push('Failed to fetch BDM ID setting. Please try again or contact administrator.');
+        }
+
+        // If there are any errors, show them all and return
+        if (errors.length > 0) {
+            isSubmitting.value = false;
+            const errorMessage = errors.join('\n');
+            if (toast) {
+                // Show all errors as separate toast messages
+                errors.forEach(error => {
                     toast.add({
                         severity: 'error',
                         summary: 'Error',
-                        detail: 'BDM ID setting not found. Please contact the administrator.',
+                        detail: error,
                         life: 5000
                     });
-                } 
-                return;
-            }
-        } catch (settingsError) {
-            isSubmitting.value = false;
-            if (toast) {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'Failed to fetch BDM ID setting. Please try again or contact administrator.',
-                    life: 5000
                 });
             } else {
-                alert('Failed to fetch BDM ID setting. Please try again or contact administrator.');
+                alert(errorMessage);
             }
             return;
-        }
-
-        // Fetch pod_id from settings_json table using default_pods_id column
-        let podId = null;
-        try {
-            const podSettingsResponse = await fetch('/api/settings/default_pods_id', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                },
-            });
-            
-            if (podSettingsResponse.ok) {
-                const podSettingsResult = await podSettingsResponse.json();
-                // Check multiple possible fields: value, default_pods_id from data, or data.default_pods_id
-                let podValue = null;
-                if (podSettingsResult.success) {
-                    // First try the value field
-                    if (podSettingsResult.value) {
-                        podValue = podSettingsResult.value;
-                    }
-                    // Also check if default_pods_id exists in the data object
-                    else if (podSettingsResult.data && podSettingsResult.data.default_pods_id) {
-                        podValue = podSettingsResult.data.default_pods_id;
-                    }
-                    // Also check direct default_pods_id field
-                    else if (podSettingsResult.default_pods_id) {
-                        podValue = podSettingsResult.default_pods_id;
-                    }
-                    
-                    if (podValue) {
-                        const podValueStr = podValue.toString().trim();
-                        if (podValueStr && podValueStr !== 'null' && podValueStr !== '') {
-                            podId = parseInt(podValueStr);
-                            // Only set if it's a valid number
-                            if (isNaN(podId)) {
-                                podId = null;
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (podSettingsError) {
-            // pod_id is optional, so we don't fail if it's not found
-            console.warn('Failed to fetch POD ID from default_pods_id setting:', podSettingsError);
         }
 
         // Prepare data for API (convert camelCase to snake_case)
@@ -962,7 +961,6 @@ const handleSubmit = async () => {
             additional_data: {
                 form_from: 'newbiz'
             },
-            pod_id: podId !== null && podId !== undefined ? podId : null,
             bdm_id: userId,
         };
 
@@ -982,9 +980,45 @@ const handleSubmit = async () => {
         if (!response.ok) {
             // Handle validation errors (same pattern as Advertising.vue)
             if (response.status === 422 && result.errors) {
-                validationErrors.value = result.errors;
-                const errorMessages = Object.values(result.errors).flat().join('\n');
+                // Clear existing errors first
+                validationErrors.value = {};
+                
+                // Wait for Vue to process the clear
+                await nextTick();
+                
+                // Create a new object to ensure Vue reactivity detects the change
+                const newErrors = {};
+                for (const key in result.errors) {
+                    if (result.errors.hasOwnProperty(key)) {
+                        newErrors[key] = Array.isArray(result.errors[key]) 
+                            ? [...result.errors[key]] 
+                            : result.errors[key];
+                    }
+                }
+                
+                // Set all errors at once to trigger reactivity
+                validationErrors.value = newErrors;
                 isSubmitting.value = false;
+                
+                // Wait for Vue to update the DOM, then scroll to first error
+                await nextTick();
+                
+                // Find the first field with an error by looking for red borders
+                const formContainer = document.querySelector('.flex-1.space-y-3');
+                if (formContainer) {
+                    // Wait a bit more for DOM to update with error classes
+                    setTimeout(() => {
+                        const firstErrorInput = formContainer.querySelector('.border-red-500');
+                        if (firstErrorInput) {
+                            firstErrorInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            // Try to focus the input if it's focusable
+                            if (firstErrorInput.tagName === 'INPUT' || firstErrorInput.tagName === 'TEXTAREA' || firstErrorInput.tagName === 'SELECT') {
+                                firstErrorInput.focus();
+                            }
+                        }
+                    }, 150);
+                }
+                
                 return;
             }
             // Show the actual error message from the server

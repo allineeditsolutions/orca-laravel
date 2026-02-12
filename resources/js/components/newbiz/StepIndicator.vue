@@ -10,7 +10,7 @@
                         step.number === currentStep
                             ? 'bg-black text-white shadow-lg scale-105 sm:scale-110'
                             : step.number < currentStep
-                            ? 'bg-gray-800 text-white shadow-md'
+                            ? 'bg-green-600 text-white shadow-md'
                             : 'bg-gray-100 border-2 border-gray-300 text-gray-400'
                     ]"
                 >
@@ -19,7 +19,7 @@
                     </svg>
                     <span v-else>{{ step.number }}</span>
                 </div>
-                <span :class="['text-xs sm:text-sm md:text-base font-semibold text-center', step.number === currentStep ? 'text-gray-900' : 'text-gray-500']">
+                <span :class="['text-xs sm:text-sm md:text-base font-semibold text-center', step.number === currentStep ? 'text-gray-900' : step.number < currentStep ? 'text-green-600' : 'text-gray-500']">
                     {{ step.title }}
                 </span>
             </div>

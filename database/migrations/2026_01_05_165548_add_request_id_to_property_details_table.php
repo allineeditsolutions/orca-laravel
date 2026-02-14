@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('property_details', function (Blueprint $table) {
-            $table->string('request_id')->nullable()->after('id');
-        });
+        if (!Schema::hasColumn('property_details', 'request_id')) {
+            Schema::table('property_details', function (Blueprint $table) {
+                $table->string('request_id')->nullable()->after('id');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('property_details', function (Blueprint $table) {
-            $table->dropColumn('request_id');
-        });
+        if (Schema::hasColumn('property_details', 'request_id')) {
+            Schema::table('property_details', function (Blueprint $table) {
+                $table->dropColumn('request_id');
+            });
+        }
     }
 };

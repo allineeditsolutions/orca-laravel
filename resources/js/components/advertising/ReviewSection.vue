@@ -389,6 +389,7 @@
                     </div>
                 </div>
 
+                
                 <!-- Occupancy & Availability Section -->
                 <div v-if="hasOccupancyInfo" class="group bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
                     <div 

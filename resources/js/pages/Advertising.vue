@@ -28,6 +28,7 @@
             </div>
         </div>
         
+        
         <!-- Step Indicator -->
         <StepIndicator v-if="!isSubmitted && !isInvalidForm" :steps="steps" :current-step="currentStep" />
         

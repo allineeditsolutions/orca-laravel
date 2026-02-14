@@ -344,6 +344,12 @@ const handleDataChange = (path, value) => {
     }
 };
 
+const clearValidationError = (path) => {
+    if (validationErrors.value[path]) {
+        delete validationErrors.value[path];
+    }
+};
+
 const validateStep1 = () => {
     const errors = {};
     
@@ -621,6 +627,89 @@ const validateStep4 = () => {
     return Object.keys(errors).length === 0;
 };
 
+const validateStep5 = () => {
+    const errors = {};
+    const other = formData.other || {};
+    const propertyType = formData.utilities?.propertyType || '';
+    
+    // For Apartment/Condo: Strata Company is required
+    if (propertyType === 'Apartment/Condo') {
+        if (!other.strataCompany || other.strataCompany.trim() === '') {
+            errors['other.strataCompany'] = 'Name of Strata Property Management Company is required';
+        }
+    }
+    
+    // For House: Sign up front is required
+    if (propertyType === 'House') {
+        if (!other.signUpFront || other.signUpFront.trim() === '') {
+            errors['other.signUpFront'] = 'Is it okay to put a sign up front is required';
+        }
+    }
+    
+    // For Townhouse: Sign up front and Strata Company are required
+    if (propertyType === 'Townhouse') {
+        if (!other.signUpFront || other.signUpFront.trim() === '') {
+            errors['other.signUpFront'] = 'Is it okay to put a sign up front is required';
+        }
+        if (!other.strataCompany || other.strataCompany.trim() === '') {
+            errors['other.strataCompany'] = 'Name of Strata Property Management Company is required';
+        }
+    }
+    
+    // If amenities includes "Other", validate amenitiesOtherDetail
+    if (other.amenities && Array.isArray(other.amenities) && other.amenities.includes('Other')) {
+        if (!other.amenitiesOtherDetail || other.amenitiesOtherDetail.trim() === '') {
+            errors['other.amenitiesOtherDetail'] = 'Please provide details about the other amenities is required';
+        }
+    }
+    
+    // If maintenance items are selected, validate their frequencies
+    if (other.maintenance && Array.isArray(other.maintenance) && other.maintenance.length > 0) {
+        const maintenanceFrequencies = other.maintenanceFrequencies || {};
+        other.maintenance.forEach((maintenanceItem) => {
+            if (!maintenanceFrequencies[maintenanceItem] || maintenanceFrequencies[maintenanceItem].trim() === '') {
+                errors[`other.maintenanceFrequencies.${maintenanceItem}`] = 'Maintenance frequency is required';
+            }
+        });
+    }
+    
+    // If hasSelfContainedSuite is "Yes", validate suite fields
+    if (other.hasSelfContainedSuite === 'Yes') {
+        if (!other.suiteBedrooms || other.suiteBedrooms.trim() === '') {
+            errors['other.suiteBedrooms'] = 'Suite Bedrooms is required';
+        }
+        
+        if (!other.suiteTenanted || other.suiteTenanted.trim() === '') {
+            errors['other.suiteTenanted'] = 'Is self-contained suite tenanted is required';
+        }
+        
+        // If suite is tenanted, validate tenant information
+        if (other.suiteTenanted === 'Yes') {
+            const suiteTenants = other.suiteTenants || [];
+            if (!Array.isArray(suiteTenants) || suiteTenants.length === 0) {
+                errors['other.suiteTenants.0.name'] = 'At least one suite tenant is required';
+            } else {
+                suiteTenants.forEach((tenant, index) => {
+                    if (!tenant || !tenant.name || tenant.name.trim() === '') {
+                        errors[`other.suiteTenants.${index}.name`] = 'Suite Tenant Name is required';
+                    }
+                    if (!tenant || !tenant.phone || tenant.phone.trim() === '') {
+                        errors[`other.suiteTenants.${index}.phone`] = 'Suite Tenant Phone is required';
+                    }
+                    if (!tenant || !tenant.email || tenant.email.trim() === '') {
+                        errors[`other.suiteTenants.${index}.email`] = 'Suite Tenant Email Address is required';
+                    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(tenant.email)) {
+                        errors[`other.suiteTenants.${index}.email`] = 'Please enter a valid email address';
+                    }
+                });
+            }
+        }
+    }
+    
+    validationErrors.value = errors;
+    return Object.keys(errors).length === 0;
+};
+
 const handleNext = () => {
     // Prevent navigation if form is invalid (missing NewBizRefId)
     if (isInvalidForm.value || !newBizRefId.value) {
@@ -684,6 +773,23 @@ const handleNext = () => {
             const errorElement = document.querySelector(`[name="${firstErrorField}"]`) || 
                                 document.querySelector(`input[placeholder*="${firstErrorField}"]`) ||
                                 document.querySelector(`select[placeholder*="${firstErrorField}"]`);
+            if (errorElement) {
+                errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                errorElement.focus();
+            }
+            return;
+        }
+    }
+    
+    // Validate step 5 before proceeding
+    if (currentStep.value === 5) {
+        if (!validateStep5()) {
+            // Scroll to first error
+            const firstErrorField = Object.keys(validationErrors.value)[0];
+            const errorElement = document.querySelector(`[name="${firstErrorField}"]`) || 
+                                document.querySelector(`input[placeholder*="${firstErrorField}"]`) ||
+                                document.querySelector(`select[placeholder*="${firstErrorField}"]`) ||
+                                document.querySelector(`textarea[placeholder*="${firstErrorField}"]`);
             if (errorElement) {
                 errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 errorElement.focus();

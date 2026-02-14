@@ -127,6 +127,7 @@ import OccupancyAvailabilitySection from '@/components/advertising/OccupancyAvai
 import UtilitiesInclusionsRestrictionsSection from '@/components/advertising/UtilitiesInclusionsRestrictionsSection.vue';
 import OtherDetailsSection from '@/components/advertising/OtherDetailsSection.vue';
 import ReviewSection from '@/components/advertising/ReviewSection.vue';
+import { devLog } from '@/lib/logger';
 
 const currentStep = ref(1);
 const isSubmitted = ref(false);
@@ -167,7 +168,7 @@ onMounted(async () => {
 
             isInvalidForm.value = false;
         } catch (error) {
-            console.error('Error validating NewBizRefId:', error);
+            devLog('Error validating NewBizRefId:', error);
             isInvalidForm.value = true;
             errorMessage.value = 'Error validating NewBizRefId. Please refresh the page or contact support.';
         }
@@ -185,92 +186,101 @@ const handleCloseError = () => {
 
 const formData = reactive({
     // Owner Information
-    businessLegalName: '',
-    ownerEmail: '',
-    phone: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    residentStatus: '',
+    businessLegalName: 'Smith Family Trust',
+    ownerEmail: 'sarah.smith@email.com',
+    phone: '(778) 234-5678',
+    firstName: 'Sarah',
+    lastName: 'Smith',
+    dateOfBirth: '1990-08-22',
+    residentStatus: 'Resident',
     coOwners: [],
     
     // Point of Contact
-    pointOfContact: '',
+    pointOfContact: 'Same as Main Owner',
     otherPointOfContact: '',
     pointOfContactFirstName: '',
     pointOfContactEmail: '',
     pointOfContactPhone: '',
     
     // Mailing Information
-    unitSuite: '',
-    streetAddress: '',
-    city: '',
-    province: '',
-    postalCode: '',
+    unitSuite: 'Apt 301',
+    streetAddress: '789 Granville Street',
+    city: 'Burnaby',
+    province: 'British Columbia',
+    postalCode: 'V5H 3K9',
 
     // Step 2 - Rental Property Information & Features
     rental: {
-        unitSuite: '',
-        streetAddress: '',
-        city: '',
-        province: '',
-        postalCode: '',
-        neighborhood: '',
-        yearBuilt: '',
-        totalFloorArea: '',
-        keys: '',
+        unitSuite: 'Basement Suite',
+        streetAddress: '321 Maple Drive',
+        city: 'Surrey',
+        province: 'BC',
+        postalCode: 'V3T 4M7',
+        neighborhood: 'Fleetwood',
+        yearBuilt: '2015',
+        totalFloorArea: '850',
+        keys: 'Physical Key',
         keysOther: '',
-        bedrooms: '',
-        bathrooms: '',
-        den: '',
-        balconypatio: '',
-        storage: '',
-        fireplaceTypes: [],
-        alarmCode: '',
-        parking: {},
-        parkingLevelStall: '',
-        laundry: '',
-        heating: [],
+        bedrooms: '1',
+        bathrooms: '1',
+        den: 'No',
+        balconypatio: 'No',
+        storage: 'No',
+        fireplaceTypes: ['Electric Fireplace'],
+        alarmCode: '1234',
+        parking: {
+            'Underground': '2',
+            'Street': '1'
+        },
+        parkingLevelStall: 'P2-45',
+        laundry: 'Shared',
+        heating: ['Baseboard', 'Heat Pump'],
         heatingType: '',
     },
 
     // Step 3 - Occupancy & Availability
     occupancy: {
-        availableAsap: '',
-        renovationPlans: '',
-        availabilityDate: '',
-        fixedTermOnly: '',
-        boostAd: '',
-        anticipatedDate: '',
-        rentalTerm: '',
-        tenantVacatingDate: '',
-        tenants: [],
+        availableAsap: 'Tenant Occupied',
+        renovationPlans: 'Yes',
+        availabilityDate: '2024-06-15',
+        fixedTermOnly: 'Yes',
+        boostAd: 'No',
+        anticipatedDate: '2024-07-01',
+        rentalTerm: 'Short-term, less than 1 year',
+        tenantVacatingDate: '2024-06-30',
+        tenants: [
+            {
+                name: 'Michael Chen',
+                phone: '(604) 987-6543',
+                email: 'michael.chen@email.com'
+            }
+        ],
         availabilityInfo: '',
-        shortTermAvailabilityInfo: '',
-        expectedRenovations: '',
-        fixedTermTenancyDescription: '',
+        shortTermAvailabilityInfo: 'Available for 6-month lease starting July 1st',
+        expectedRenovations: 'Kitchen cabinet updates and fresh paint',
+        fixedTermTenancyDescription: 'Owner will return after 6 months for personal use',
     },
 
     // Step 4 - Utilities/Inclusions/Restrictions
     utilities: {
-        water: '',
-        waterSplitDetail: '',
+        water: 'Included in Rent',
+        waterSplitDetail: '50/50 split with main unit',
         waterOtherDetail: '',
-        electricity: '',
+        electricity: 'Included in Rent',
         electricitySplitDetail: '',
         electricityOtherDetail: '',
-        gas: '',
+        gas: 'Not applicable to the property',
         gasSplitDetail: '',
         gasOtherDetail: '',
-        heat: '',
+        heat: 'Not Included in Rent',
         heatSplitDetail: '',
         heatOtherDetail: '',
-        inclusions: [],
+        inclusions: ['Stove', 'Fridge', 'Microwave'],
         inclusionsOtherDetail: '',
-        furnishing: '',
-        pets: '',
+        furnishing: 'Unfurnished',
+        pets: 'No',
         petsOtherDetail: '',
-        propertyType: '',
+        propertyType: 'House',
         propertyTypeOtherDetail: '',
     },
 
@@ -280,29 +290,29 @@ const formData = reactive({
         strataManagerName: '',
         strataPhone: '',
         strataEmail: '',
-        buildingManagerName: '',
-        buildingManagerPhone: '',
-        buildingManagerEmail: '',
-        moveInFees: '',
-        amenities: [],
+        buildingManagerName: 'Tom Wilson',
+        buildingManagerPhone: '(604) 333-4444',
+        buildingManagerEmail: 'tom.wilson@management.com',
+        moveInFees: '$500 security deposit + $300 pet deposit if applicable',
+        amenities: ['Parking', 'Storage'],
         amenitiesOtherDetail: '',
-        signUpFront: '',
-        maintenance: [],
+        signUpFront: 'No',
+        maintenance: ['Lawn Care'],
         maintenanceFrequencies: {},
-        sprinklersService: '',
-        hasSelfContainedSuite: '',
-        suiteBedrooms: '',
-        suiteTenanted: '',
+        sprinklersService: 'N/A',
+        hasSelfContainedSuite: 'Yes',
+        suiteBedrooms: '1',
+        suiteTenanted: 'No',
         suiteTenants: [],
-        suiteOtherDetails: '',
-        fuseBox: '',
+        suiteOtherDetails: 'Basement suite with separate entrance',
+        fuseBox: 'In main house',
         amenitiesFloor: '',
-        bikeStorageLocation: '',
-        garbageInfo: '',
-        mainWaterline: '',
-        amenitiesNotes: '',
-        virtualTour: '',
-        listingUrl: '',
+        bikeStorageLocation: 'Backyard shed',
+        garbageInfo: 'Garbage pickup every Tuesday',
+        mainWaterline: 'Shared with main house',
+        amenitiesNotes: 'Quiet neighborhood, close to transit',
+        virtualTour: 'https://tours.example.com/property-321',
+        listingUrl: 'https://listings.example.com/property-321',
     },
 });
 
@@ -738,7 +748,7 @@ const handleSubmit = async () => {
             return;
         }
     } catch (error) {
-        console.error('Error validating NewBizRefId before submission:', error);
+        devLog('Error validating NewBizRefId before submission:', error);
         isInvalidForm.value = true;
         errorMessage.value = 'Error validating NewBizRefId. Please try again or contact support.';
         return;
@@ -748,6 +758,33 @@ const handleSubmit = async () => {
         isSubmitting.value = true;
         
         // Prepare data for API
+        // Ensure all rental fields are included, especially arrays and objects
+        // Explicitly include all fields to ensure nothing is missing
+        const rentalInfoFeatures = {
+            unitSuite: formData.rental?.unitSuite || '',
+            streetAddress: formData.rental?.streetAddress || '',
+            city: formData.rental?.city || '',
+            province: formData.rental?.province || '',
+            postalCode: formData.rental?.postalCode || '',
+            neighborhood: formData.rental?.neighborhood || '',
+            yearBuilt: formData.rental?.yearBuilt || '',
+            totalFloorArea: formData.rental?.totalFloorArea || '',
+            keys: formData.rental?.keys || '',
+            keysOther: formData.rental?.keysOther || '',
+            bedrooms: formData.rental?.bedrooms || '',
+            bathrooms: formData.rental?.bathrooms || '',
+            den: formData.rental?.den || '',
+            balconypatio: formData.rental?.balconypatio || '',
+            storage: formData.rental?.storage || '',
+            fireplaceTypes: formData.rental?.fireplaceTypes || [],
+            alarmCode: formData.rental?.alarmCode || '',
+            parking: formData.rental?.parking || {},
+            parkingLevelStall: formData.rental?.parkingLevelStall || '',
+            laundry: formData.rental?.laundry || '',
+            heating: formData.rental?.heating || [],
+            heatingType: formData.rental?.heatingType || '',
+        };
+        
         const submitData = {
             request_id: newBizRefId.value,
             business_legal_name: formData.businessLegalName,
@@ -774,12 +811,15 @@ const handleSubmit = async () => {
                 province: formData.province,
                 postalCode: formData.postalCode,
             },
-            rental_info_features: formData.rental,
+            rental_info_features: rentalInfoFeatures,
             occupancy_availability: formData.occupancy,
             utilities_inc_restrictions: formData.utilities,
             other_details: formData.other,
             status: 'submitted',
         };
+        
+        // Log the rental info features in development to verify data structure
+        devLog('Rental Info Features being submitted:', rentalInfoFeatures);
 
         // Make API call
         const response = await fetch('/api/property-details', {
@@ -808,7 +848,7 @@ const handleSubmit = async () => {
         // Success
         isSubmitted.value = true;
     } catch (error) {
-        console.error('Error submitting form:', error);
+        devLog('Error submitting form:', error);
         alert('An error occurred while saving: ' + error.message);
     } finally {
         isSubmitting.value = false;

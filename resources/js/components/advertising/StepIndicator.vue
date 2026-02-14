@@ -1,13 +1,13 @@
 <template>
-    <div class="fixed top-0 left-0 right-0 w-full bg-white/90 backdrop-blur border-b border-gray-200 z-50">
-        <div class="px-4 sm:px-6 bg-gray-100 shadow-md">
+    <div class="fixed top-0 left-0 right-0 w-full bg-gray-100/95 backdrop-blur border-b border-gray-300 z-50">
+        <div class="px-4 sm:px-6 bg-gray-200 shadow-md">
             <div class="w-full max-w-6xl lg:max-w-[1900px] mx-auto" >
                 <!-- Mobile/Small: scrollable with connectors -->
                 <div class="relative flex md:hidden items-center py-4">
                     <!-- Left fade gradient -->
-                    <div class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-100 to-transparent z-10 pointer-events-none"></div>
+                    <div class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-200 to-transparent z-10 pointer-events-none"></div>
                     <!-- Right fade gradient -->
-                    <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-100 to-transparent z-10 pointer-events-none"></div>
+                    <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-200 to-transparent z-10 pointer-events-none"></div>
                     
                     <div 
                         ref="mobileScrollContainer"

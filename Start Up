@@ -3,7 +3,7 @@ ssh -T git@github-orca-laravel
 
 == PUSH NEW CHANGES FROM LOCAL  TO GITHUB
 git add .
-git commit -m "Changes 021226 - 10:51am"
+git commit -m "Changes 021426 - 5:58pm"
 git push origin main
 
 
@@ -15,3 +15,7 @@ Password : ZjBsoo863auGjVmWRn0l
 new installed
 - npm install primevue primeicons
 - npm install @primevue/themes
+
+
+
+npm install --save-dev vite-plugin-remove-console

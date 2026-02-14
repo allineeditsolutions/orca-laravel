@@ -1,19 +1,29 @@
 <template>
     <div class="min-h-screen bg-gray-50 flex items-start justify-center px-2 sm:px-4 pt-2 pb-4 sm:pb-8 md:pb-12">
         <!-- Enhanced Error Message for Invalid Form - Centered -->
-        <div v-if="isInvalidForm" class="fixed inset-0 z-50 flex items-center justify-center">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+        <div v-if="isInvalidForm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 transform transition-all animate-fade-in">
                 <div class="p-8 text-center">
                     <!-- Error Icon -->
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
-                        <svg class="h-10 w-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-red-100 mb-6 animate-pulse">
+                        <svg class="h-12 w-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                     </div>
                     
                     <!-- Error Title -->
-                    <h2 class="text-2xl font-bold text-gray-900 mb-3">Invalid Form Access</h2>
-                 
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Invalid Form Access</h2>
+                    
+                    <!-- Error Message -->
+                    <p class="text-gray-700 text-base mb-6 leading-relaxed">{{ errorMessage || 'This form requires a valid reference ID to proceed.' }}</p>
+                    
+                    <!-- Action Button -->
+                    <button
+                        @click="handleCloseError"
+                        class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors duration-200 shadow-lg hover:shadow-xl"
+                    >
+                        Close
+                    </button>
                 </div>
             </div>
         </div>
@@ -123,20 +133,54 @@ const isSubmitting = ref(false);
 const validationErrors = ref({});
 const newBizRefId = ref(null);
 const isInvalidForm = ref(false);
+const errorMessage = ref('');
 
-// Extract NewBizRefId from URL query parameter
-onMounted(() => {
+// Extract NewBizRefId from URL query parameter and validate it
+onMounted(async () => {
     document.title = 'Advertising';
 
     const urlParams = new URLSearchParams(window.location.search);
     const refId = urlParams.get('NewBizRefId');
     if (refId) {
         newBizRefId.value = refId;
-        isInvalidForm.value = false;
+        
+        // Validate the NewBizRefId against the database
+        try {
+            const response = await fetch('/api/property-details/validate-ref-id', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+                body: JSON.stringify({ ref_id: refId }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.valid) {
+                isInvalidForm.value = true;
+                errorMessage.value = data.message || 'Invalid NewBizRefId. This reference ID does not exist in our system.';
+                return;
+            }
+
+            isInvalidForm.value = false;
+        } catch (error) {
+            console.error('Error validating NewBizRefId:', error);
+            isInvalidForm.value = true;
+            errorMessage.value = 'Error validating NewBizRefId. Please refresh the page or contact support.';
+        }
     } else {
         isInvalidForm.value = true;
+        errorMessage.value = 'Invalid form: Missing NewBizRefId parameter. This form requires a valid reference ID to proceed.';
     }
 });
+
+const handleCloseError = () => {
+    // Optionally, you can redirect or just keep the modal visible
+    // For now, we'll keep it visible since the form is invalid
+    // isInvalidForm.value = false;
+};
 
 const formData = reactive({
     // Owner Information
@@ -150,7 +194,7 @@ const formData = reactive({
     coOwners: [],
     
     // Point of Contact
-    pointOfContact: 'Same as Main Owner',
+    pointOfContact: '',
     otherPointOfContact: '',
     pointOfContactFirstName: '',
     pointOfContactEmail: '',
@@ -261,15 +305,8 @@ const formData = reactive({
     },
 });
 
-// Computed property for step 5 title based on property type
+// Computed property for step 5 title
 const getStep5Title = (propertyType) => {
-    if (propertyType === 'House') {
-        return 'House Details';
-    } else if (propertyType === 'Apartment/Condo') {
-        return 'Apartment/Condo Details';
-    } else if (propertyType === 'Townhouse') {
-        return 'Townhouse Details';
-    }
     return 'Other Details';
 };
 
@@ -353,6 +390,18 @@ const validateStep1 = () => {
     // Mailing Information - Required fields
     if (!formData.streetAddress || formData.streetAddress.trim() === '') {
         errors.streetAddress = 'Street Address is required';
+    }
+    
+    if (!formData.city || formData.city.trim() === '') {
+        errors.city = 'City is required';
+    }
+    
+    if (!formData.province || formData.province.trim() === '') {
+        errors.province = 'Province is required';
+    }
+    
+    if (!formData.postalCode || formData.postalCode.trim() === '') {
+        errors.postalCode = 'Postal / ZIP Code is required';
     }
     
     if (!formData.city || formData.city.trim() === '') {
@@ -546,9 +595,12 @@ const validateStep4 = () => {
         }
     }
     
-    // The Property is (furnishing) - Required
+    // The Property is (furnishing) - Required and must be a valid option
+    const validFurnishingOptions = ['Unfurnished', 'Furnished'];
     if (!utilities.furnishing || utilities.furnishing.trim() === '') {
         errors['utilities.furnishing'] = 'The Property is required';
+    } else if (!validFurnishingOptions.includes(utilities.furnishing)) {
+        errors['utilities.furnishing'] = 'Please select a valid option for The Property is';
     }
     
     // Type of Property - Required
@@ -570,7 +622,8 @@ const validateStep4 = () => {
 const handleNext = () => {
     // Prevent navigation if form is invalid (missing NewBizRefId)
     if (isInvalidForm.value || !newBizRefId.value) {
-        alert('Invalid form: Missing NewBizRefId parameter. This form requires a valid reference ID to proceed.');
+        isInvalidForm.value = true;
+        errorMessage.value = 'Invalid form: Missing NewBizRefId parameter. This form requires a valid reference ID to proceed.';
         return;
     }
     
@@ -658,9 +711,35 @@ const handleSubmit = async () => {
     }
     
     // Validate NewBizRefId before submission
-    if (!newBizRefId.value) {
-        alert('Invalid form: Missing NewBizRefId parameter. This form requires a valid reference ID to proceed.');
+    if (!newBizRefId.value || isInvalidForm.value) {
         isInvalidForm.value = true;
+        errorMessage.value = 'Invalid form: Missing or invalid NewBizRefId parameter. This form requires a valid reference ID to proceed.';
+        return;
+    }
+
+    // Re-validate NewBizRefId before submission to ensure it still exists
+    try {
+        const response = await fetch('/api/property-details/validate-ref-id', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+            },
+            body: JSON.stringify({ ref_id: newBizRefId.value }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.valid) {
+            isInvalidForm.value = true;
+            errorMessage.value = data.message || 'Invalid NewBizRefId. This reference ID does not exist in our system.';
+            return;
+        }
+    } catch (error) {
+        console.error('Error validating NewBizRefId before submission:', error);
+        isInvalidForm.value = true;
+        errorMessage.value = 'Error validating NewBizRefId. Please try again or contact support.';
         return;
     }
     
@@ -736,3 +815,19 @@ const handleSubmit = async () => {
 };
 </script>
 
+<style scoped>
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+}
+</style>

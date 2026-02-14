@@ -143,11 +143,16 @@
                                 </div>
                             </div>
                         </label>
-                        <input
-                            type="date"
-                            :value="formData.dateOfBirth"
-                            @input="handleChange('dateOfBirth', $event.target.value)"
-                            :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:shadow-lg shadow-md focus:shadow-xl', validationErrors.dateOfBirth ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black hover:border-gray-400']"
+                        <DatePicker
+                            :modelValue="formData.dateOfBirth ? new Date(formData.dateOfBirth) : null"
+                            @update:modelValue="handleDateChange"
+                            dateFormat="yy-mm-dd"
+                            placeholder="Select date of birth"
+                            :maxDate="new Date()"
+                            fluid
+                            showIcon
+                            :class="['w-full', validationErrors.dateOfBirth ? 'border-red-500' : '']"
+                            :manualInput="false"
                         />
                         <p v-if="validationErrors.dateOfBirth" class="mt-1 text-sm text-red-600">{{ validationErrors.dateOfBirth }}</p>
                     </div>
@@ -335,12 +340,16 @@
                                         </div>
                                     </div>
                                 </label>
-                                <input
-                                    type="date"
-                                    :value="coOwner.dateOfBirth"
-                                    @input="updateCoOwner(index, 'dateOfBirth', $event.target.value)"
-                                    placeholder="Date of Birth*"
-                                    class="w-full p-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-black/10 focus:border-black transition-all duration-300 text-base text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl "
+                                <DatePicker
+                                    :modelValue="coOwner.dateOfBirth ? new Date(coOwner.dateOfBirth) : null"
+                                    @update:modelValue="(date) => handleCoOwnerDateChange(index, date)"
+                                    dateFormat="yy-mm-dd"
+                                    placeholder="Select date of birth"
+                                    :maxDate="new Date()"
+                                    fluid
+                                    showIcon
+                                    class="w-full"
+                                    :manualInput="false"
                                 />
                             </div>
                         </div>
@@ -366,6 +375,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import DatePicker from 'primevue/datepicker';
 
 const props = defineProps({
     formData: {
@@ -437,6 +447,32 @@ const updateCoOwner = (index, field, value) => {
 const removeCoOwner = (index) => {
     const updated = (props.formData.coOwners || []).filter((_, i) => i !== index);
     emit('data-change', 'coOwners', updated);
+};
+
+const handleDateChange = (date) => {
+    if (date) {
+        // Format date as YYYY-MM-DD
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        emit('data-change', 'dateOfBirth', formattedDate);
+    } else {
+        emit('data-change', 'dateOfBirth', '');
+    }
+};
+
+const handleCoOwnerDateChange = (index, date) => {
+    if (date) {
+        // Format date as YYYY-MM-DD
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        updateCoOwner(index, 'dateOfBirth', formattedDate);
+    } else {
+        updateCoOwner(index, 'dateOfBirth', '');
+    }
 };
 </script>
 

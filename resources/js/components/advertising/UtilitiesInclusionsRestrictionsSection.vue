@@ -36,7 +36,7 @@
                             <label class="block mb-2 text-gray-800">Water</label>
                             <div class="relative">
                                 <select
-                                    :value="d.utilities?.water || ''"
+                                    :value="utilities.water || ''"
                                     @change="handleDataChange('utilities.water', $event.target.value)"
                                     :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['utilities.water'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                 >
@@ -80,7 +80,7 @@
                             <label class="block mb-2 text-gray-800">Electricity</label>
                             <div class="relative">
                                 <select
-                                    :value="d.utilities?.electricity || ''"
+                                    :value="utilities.electricity || ''"
                                     @change="handleDataChange('utilities.electricity', $event.target.value)"
                                     :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['utilities.electricity'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                 >
@@ -124,7 +124,7 @@
                             <label class="block mb-2 text-gray-800">Gas</label>
                             <div class="relative">
                                 <select
-                                    :value="d.utilities?.gas || ''"
+                                    :value="utilities.gas || ''"
                                     @change="handleDataChange('utilities.gas', $event.target.value)"
                                     :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['utilities.gas'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                 >
@@ -168,7 +168,7 @@
                             <label class="block mb-2 text-gray-800">Heat</label>
                             <div class="relative">
                                 <select
-                                    :value="d.utilities?.heat || ''"
+                                    :value="utilities.heat || ''"
                                     @change="handleDataChange('utilities.heat', $event.target.value)"
                                     :class="['w-full p-2 pr-12 sm:pr-14 md:pr-16 lg:pr-20 xl:pr-24 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['utilities.heat'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                 >
@@ -397,6 +397,11 @@ const inclusionsOptions = [
     'BBQ allowed',
     'Other',
 ];
+
+// Make computed properties more explicit to ensure reactivity
+const utilities = computed(() => {
+    return props.formData?.utilities || {};
+});
 
 const d = computed(() => props.formData || {});
 

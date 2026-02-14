@@ -50,14 +50,17 @@
                     <div v-if="d.occupancy?.availableAsap === 'Tenant Occupied'" class="space-y-4 mt-2 lg:mt-6">
                         <div>
                             <label class="block mb-2 text-gray-800">When is the current Tenant vacating? <span class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <input
-                                    type="date"
-                                    :value="d.occupancy?.tenantVacatingDate || ''"
-                                    @change="handleDataChange('occupancy.tenantVacatingDate', $event.target.value)"
-                                    :class="['w-full lg:w-60 p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['occupancy.tenantVacatingDate'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
-                                />
-                            </div>
+                            <DatePicker
+                                :modelValue="d.occupancy?.tenantVacatingDate ? new Date(d.occupancy.tenantVacatingDate) : null"
+                                @update:modelValue="handleTenantVacatingDateChange"
+                                dateFormat="yy-mm-dd"
+                                placeholder="Select tenant vacating date"
+                                :minDate="new Date()"
+                                fluid
+                                showIcon
+                                :class="['w-full lg:w-60', validationErrors['occupancy.tenantVacatingDate'] ? 'border-red-500' : '']"
+                                :manualInput="false"
+                            />
                             <p v-if="validationErrors['occupancy.tenantVacatingDate']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['occupancy.tenantVacatingDate']) ? validationErrors['occupancy.tenantVacatingDate'][0] : validationErrors['occupancy.tenantVacatingDate'] }}</p>
                         </div>
 
@@ -131,7 +134,7 @@
                                             <input
                                                 type="tel"
                                                 :value="tenant.phone || ''"
-                                                @input="handleTenantChange(index, 'phone', $event.target.value)"
+                                                @input="handleTenantPhoneChange(index, $event.target.value)"
                                                 placeholder="(000) 000-0000"
                                                 :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base sm:text-lg lg:text-xl text-gray-900 placeholder-gray-400 bg-white hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors[`occupancy.tenants.${index}.phone`] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
                                             />
@@ -314,11 +317,15 @@
                     <div class="space-y-3 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
                         <label class="block mb-2 text-gray-800">Anticipated occupancy date for Tenants to move in <span class="text-red-500">*</span></label>
                         <div class="relative">
-                            <input
-                                type="date"
-                                :value="d.occupancy?.anticipatedDate || ''"
-                                @change="handleDataChange('occupancy.anticipatedDate', $event.target.value)"
-                                :class="['w-full p-2 border-2 rounded-xl focus:ring-4 transition-all duration-300 text-base text-gray-900 bg-white appearance-none cursor-pointer hover:border-gray-400 hover:shadow-lg shadow-md focus:shadow-xl', validationErrors['occupancy.anticipatedDate'] ? 'border-red-500 focus:ring-red-500/20 focus:border-red-500' : 'border-gray-200 focus:ring-black/10 focus:border-black']"
+                            <DatePicker
+                                :modelValue="d.occupancy?.anticipatedDate ? new Date(d.occupancy.anticipatedDate) : null"
+                                @update:modelValue="handleAnticipatedDateChange"
+                                dateFormat="yy-mm-dd"
+                                placeholder="Select anticipated occupancy date"
+                                :minDate="new Date()"
+                                fluid
+                                :class="['w-full', validationErrors['occupancy.anticipatedDate'] ? 'border-red-500' : '']"
+                                :manualInput="false"
                             />
                         </div>
                         <p v-if="validationErrors['occupancy.anticipatedDate']" class="mt-1 text-sm text-red-600">{{ Array.isArray(validationErrors['occupancy.anticipatedDate']) ? validationErrors['occupancy.anticipatedDate'][0] : validationErrors['occupancy.anticipatedDate'] }}</p>
@@ -401,6 +408,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import DatePicker from 'primevue/datepicker';
 
 const props = defineProps({
     onBack: Function,
@@ -451,6 +459,25 @@ const handleDataChange = (path, value) => {
     emit('data-change', path, value);
 };
 
+const formatPhoneNumber = (value) => {
+    // Remove all non-digit characters
+    const phoneNumber = value.replace(/\D/g, '');
+    
+    // Limit to 10 digits
+    const limitedNumber = phoneNumber.slice(0, 10);
+    
+    // Format as (000) 000-0000
+    if (limitedNumber.length === 0) {
+        return '';
+    } else if (limitedNumber.length <= 3) {
+        return `(${limitedNumber}`;
+    } else if (limitedNumber.length <= 6) {
+        return `(${limitedNumber.slice(0, 3)}) ${limitedNumber.slice(3)}`;
+    } else {
+        return `(${limitedNumber.slice(0, 3)}) ${limitedNumber.slice(3, 6)}-${limitedNumber.slice(6)}`;
+    }
+};
+
 const handleTenantChange = (index, field, value) => {
     const currentTenants = [...tenants.value];
     currentTenants[index] = {
@@ -458,6 +485,11 @@ const handleTenantChange = (index, field, value) => {
         [field]: value
     };
     emit('data-change', 'occupancy.tenants', currentTenants);
+};
+
+const handleTenantPhoneChange = (index, value) => {
+    const formatted = formatPhoneNumber(value);
+    handleTenantChange(index, 'phone', formatted);
 };
 
 const addTenant = () => {
@@ -470,6 +502,32 @@ const removeTenant = (index) => {
     const currentTenants = [...tenants.value];
     currentTenants.splice(index, 1);
     emit('data-change', 'occupancy.tenants', currentTenants);
+};
+
+const handleAnticipatedDateChange = (date) => {
+    if (date) {
+        // Format date as YYYY-MM-DD
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        emit('data-change', 'occupancy.anticipatedDate', formattedDate);
+    } else {
+        emit('data-change', 'occupancy.anticipatedDate', '');
+    }
+};
+
+const handleTenantVacatingDateChange = (date) => {
+    if (date) {
+        // Format date as YYYY-MM-DD
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        emit('data-change', 'occupancy.tenantVacatingDate', formattedDate);
+    } else {
+        emit('data-change', 'occupancy.tenantVacatingDate', '');
+    }
 };
 </script>
 

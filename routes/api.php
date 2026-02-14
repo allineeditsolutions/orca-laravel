@@ -99,6 +99,7 @@ Route::post('/complycube/create-verification-token', function (Illuminate\Http\R
 
 // Property Details Routes
 Route::post('/property-details', [PropertyDetailsController::class, 'store']);
+Route::post('/property-details/validate-ref-id', [PropertyDetailsController::class, 'validateNewBizRefId']);
 
 // Schedule Visit Routes
 Route::post('/schedule-visits', [ScheduleVisitController::class, 'store']);
